@@ -1,10 +1,6 @@
-# Pixel-art scaling Accelerator in Chisel
-> 郭昱辰, 簡子昕
-
-Welcome to the documentation for the **Chisel-Based Pixel-Art Scaling Hardware Accelerator**. This project represents the final assignment for the Computer Architecture course (113-1 Semester). In its initial version, the accelerator facilitates image conversion and incorporates several fundamental features. Future iterations will focus on enhancing performance through hardware acceleration.
-
-
-[GitHub Repository](https://github.com/whoishuni/Pixel-art-scaling-Accelerator-in-Chisel)
+# Pixel-art scaling Accelerator in Chisel upgrade
+> 陳沁妤
+[GitHub](https://github.com/kstoko02/Pixel-art-scaling-Accelerator-in-Chisel-upgrade)
 
 Table of Contents
 -----------------
@@ -27,7 +23,7 @@ Table of Contents
 Introduction
 ------------
 
-Pixel Art is a digital art form characterized by the meticulous creation and editing of images at the pixel level, commonly utilized in gaming and graphic design. As image resolutions escalate, the efficient scaling of pixel art poses significant challenges. This project endeavors to design a hardware accelerator using the Chisel language to achieve high-quality pixel art scaling. The current version (1.0) encompasses image conversion and several essential functionalities, laying the groundwork for future enhancements aimed at optimizing performance through hardware acceleration.
+Version 2.0 replaces the general image interpolation algorithm used in [Version 1.0](https://hackmd.io/@sysprog/r1cybDhSye) with a pixel-art-aware scaling algorithm, shifting the design focus from smooth interpolation to edge-preserving, rule-based scaling specifically tailored for pixel art.
 
 
 Prerequisites
