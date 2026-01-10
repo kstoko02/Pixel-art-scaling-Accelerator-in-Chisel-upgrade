@@ -1,0 +1,20 @@
+AssumeTest
+input reset : bv<1>
+input in : bv<8>
+node _out_T : bv<9> = add(zext(in, 1), zext(1'b1, 8))
+node _T : bv<1> = ugt(in, zext(2'b11, 6))
+node _T_1 : bv<1> = not(ugeq(in, 8'b11111111))
+node _T_2 : bv<1> = and(_T, _T_1)
+node _T_3 : bv<1> = not(reset)
+node _T_4 : bv<1> = not(_T_2)
+output out : bv<8> = _out_T[7:0]
+node _T_5 : bv<1> = ugt(out, zext(3'b100, 5))
+node _T_7 : bv<1> = not(_T_5)
+node _resetPhase : bv<1> = not(ugeq(_resetCount, 1'b1))
+constraint assume : bv<1> = implies(_T_3, _T_2)
+bad assert : bv<1> = not(implies(_T_3, _T_5))
+bad assert_1 : bv<1> = 1'b0
+constraint _resetActive : bv<1> = implies(_resetPhase, reset)
+state _resetCount : bv<1>
+  [init] 1'b0
+  [next] ite(_resetPhase, add(zext(_resetCount, 1), zext(1'b1, 1))[0], _resetCount)

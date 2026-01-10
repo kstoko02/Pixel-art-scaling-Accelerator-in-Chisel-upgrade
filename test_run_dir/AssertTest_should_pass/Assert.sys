@@ -1,0 +1,16 @@
+Assert
+input reset : bv<1>
+input io_a : bv<8>
+input io_b : bv<8>
+node _io_sum_T : bv<9> = add(zext(io_a, 1), zext(io_b, 1))
+node _io_sum_T_1 : bv<8> = _io_sum_T[7:0]
+output io_sum : bv<8> = _io_sum_T[7:0]
+node _T_2 : bv<1> = eq(io_sum, _io_sum_T_1)
+node _T_3 : bv<1> = not(reset)
+node _T_4 : bv<1> = not(_T_2)
+node _resetPhase : bv<1> = not(ugeq(_resetCount, 1'b1))
+bad assert : bv<1> = not(implies(_T_3, _T_2))
+constraint _resetActive : bv<1> = implies(_resetPhase, reset)
+state _resetCount : bv<1>
+  [init] 1'b0
+  [next] ite(_resetPhase, add(zext(_resetCount, 1), zext(1'b1, 1))[0], _resetCount)

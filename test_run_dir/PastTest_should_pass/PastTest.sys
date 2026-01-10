@@ -1,0 +1,24 @@
+PastTest
+input reset : bv<1>
+input io_in : bv<8>
+node _cycles_active : bv<1> = not(ugeq(_cycles, 2'b10))
+node _after_2 : bv<1> = not(_cycles_active)
+node _T : bv<1> = eq(reg, out_1)
+node _T_1 : bv<1> = not(reset)
+node _T_2 : bv<1> = not(_T)
+node _resetPhase : bv<1> = not(ugeq(_resetCount, 1'b1))
+bad assert : bv<1> = not(implies(and(_T_1, _after_2), _T))
+constraint _resetActive : bv<1> = implies(_resetPhase, reset)
+state _cycles : bv<2>
+  [next] ite(reset, 2'b0, ite(_cycles_active, add(zext(_cycles, 1), zext(2'b1, 1))[1:0], _cycles))
+state reg_REG : bv<8>
+  [next] io_in
+state reg : bv<8>
+  [next] reg_REG
+state out : bv<8>
+  [next] io_in
+state out_1 : bv<8>
+  [next] out
+state _resetCount : bv<1>
+  [init] 1'b0
+  [next] ite(_resetPhase, add(zext(_resetCount, 1), zext(1'b1, 1))[0], _resetCount)
