@@ -1,0 +1,681 @@
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(FileReaderTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(DrawingTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ArbiterTreeTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(LogicTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(Xbr2xPipelineTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(BundleVecTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(FormalTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(Snippets, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(EncDecTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(verilog.BasicTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(FlasherTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(FsmTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(BoringTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(FunctionalTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(AssertTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ShiftRegisterTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(AddersTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(fifo.FifoTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ConvertTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(TickerTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBoringTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBoring[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mXbr2xPipelineTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- Xbr2xPipeline should produce blocks aligned to (x-1,y-1) centers *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Vector((65535, 1, Vector(4, 4, 4, 4)), (0, 1, Vector(4, 4, 4, 4)), (1, 1, Vector(5, 5, 5, 5)), (2, 1, Vector(6, 6, 6, 6)), (2, 1, Vector(6, 6, 6, 6))) had size 5 instead of expected size 6 Expected 6 blocks, got 5 (FrameStoreImageIOTest.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSnippets:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCombinational test with Treadle[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCombinational test with Verilator[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ExampleTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(PrintfCntTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(SimpleTestExpect, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(GenHardwareTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(CombinationalTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ScalaGenTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(SimpleTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFileReaderTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFileReader[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.FileNotFoundException: data.txt (No such file or directory)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at ... ()[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at FileReader.<init>(FileReader.scala:15)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at FileReaderTest.$anonfun$new$2(FileReaderTest.scala:10)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at ... ()[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at ... (Stack trace trimmed to user code only. Rerun with --full-stacktrace to see the full stack trace)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAssertTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAssert[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBundleVecTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBundleVec[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass VecInit[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(InterconnectTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ParamRouterTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(SequentialTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ComponentTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(CountBoolTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(WaveformCounterTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(BlackBoxesTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ReadyValidBufferTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ParamFuncTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(PwmTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(MemoryTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ArbiterTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ComparatorTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFsmTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSimpleFsm[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRisingFsm[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRisingMooreFsm[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBasicTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAdder[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRegister[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mComb[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mIfElse[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFlasherTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFlasher[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFormalTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFormalSimple[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "z3" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTModelChecker.check(SMTModelChecker.scala:33)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.Maltese$.bmc(Maltese.scala:72)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.Formal$.executeOp(Formal.scala:82)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mPastTest[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "z3" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTModelChecker.check(SMTModelChecker.scala:33)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.Maltese$.bmc(Maltese.scala:72)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.Formal$.executeOp(Formal.scala:82)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAssumeTest[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "z3" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTModelChecker.check(SMTModelChecker.scala:33)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.Maltese$.bmc(Maltese.scala:72)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.Formal$.executeOp(Formal.scala:82)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAssertTest[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should pass *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "z3" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTModelChecker.check(SMTModelChecker.scala:33)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.Maltese$.bmc(Maltese.scala:72)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.Formal$.executeOp(Formal.scala:82)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.SMTLibSolverContext.<init>(SMTLibSolver.scala:212)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.formal.backends.smt.Z3SMTLib$.createContext(SMTLibSolver.scala:71)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mLogicTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mLogic[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDrawingTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDrawAcc[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDrawMux6[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mEncDecTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mEndDec[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mLarge encoder[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFunctionalTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFunctionalAdd[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFunctionalComp[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mShiftRegisterTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mShiftRegister[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mShiftRegisterParaOut[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mShiftRegisterParaLoad[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiterTreeTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiterTree[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiterSimpleTree[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiterTree[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should be fair[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(FunctionalMinTester, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(RegisterFileTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(TimerTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(leros.AluAccuTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(TagTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(PopulationCountTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ClockDomainsTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(CounterDeviceTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(CounterTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(DebounceTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(SimplePrintfTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(BcdTableTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(RegisterTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(SimpleTestPeek, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(SyncResetTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(MultiClockMemoryTester, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(WaveformTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mTickerTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mUpTicker 5[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDownTicker 7[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mNerdTicker 11[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mConvertTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mConvert[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mPrintfCntTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mPrintf[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should print[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mExampleTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mIntegers[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should add[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mIntegers[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should multiply[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSimpleTestExpect:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDUT[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mGenHardwareTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mGenHardware[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFifoTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBubbleFifo[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDoubleBufferFifo[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMemFifo[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRegFifo[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(BubbleFifoTest, org.scalatest.tools.Framework$$anon$1@31610c09, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mScalaGenTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mShift[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSimpleTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDUT[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mInterconnectTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mInterconnect[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mParamRouterTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mParamRouter[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSequentialTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSequential[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCounter[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mTick[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mComponentTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mComponentFn[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCount10[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count correctly[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCountBoolTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCountBool[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count them[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mWaveformCounterTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mWaveformCounter[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBlackBoxesTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBlackBoxAdder[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should work inlined *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should work with path *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should work with resource *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.io.IOException: Cannot run program "verilator" (in directory "/home/phlab/Pixel-art-scaling-Accelerator-in-Chisel-upgrade-main"): error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version(VerilatorSimulator.scala:48)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.majorVersion(VerilatorSimulator.scala:78)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.createContext(VerilatorSimulator.scala:86)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  Cause: java.io.IOException: error=2, No such file or directory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$lzycompute$1(ProcessOps.scala:128)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.proc$1(ProcessOps.scala:122)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.spawn(ProcessOps.scala:135)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at os.proc.call(ProcessOps.scala:76)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at chiseltest.simulator.VerilatorSimulator$.version$lzycompute(VerilatorSimulator.scala:55)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mReadyValidBufferTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mReadyValidBufferTest[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mParamFuncTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mParamFunc[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mPwmTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mPWM[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCombinationalTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCombinational logic[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with purely combinational logic[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with a when statement[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with a when-otherwise statement[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with a when-elsewhen-otherwise statement[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with a default value[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiterTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiter3[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiter3Direct[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArbiter3Loop[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mComparatorTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mComparator[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMemoryTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMemory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMemory with forwarding[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMemory write first[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mInitialized memory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRegisterFileTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRegistersFile[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should have a debug port[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRegistersFile[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should rise and exception without the debug port[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mTimerTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mTimer[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAluAccuTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAluAccu[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mTagTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mIntegers[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should add[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mPopulationCountTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mPopCount[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mClockDomainsTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mClock domains[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCounterDeviceTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCounterDevice[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCounterDevice[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with functions[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFunctionalMinTester:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mScalaFunctionalMin[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFunctionalMin[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFunctionalMin random tests[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDebounceTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDebounce[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should debounce inputs[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDebounceFunc[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should debounce[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSimplePrintfTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDUT[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBcdTableTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBCD table[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should output BCD encoded numbers[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRegisterTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRegisters[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should store values[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSimpleTestPeek:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDUT[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSyncResetTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSyncReset[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should synchronize[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMultiClockMemoryTester:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMulti-clock memory[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mWaveformTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mWaveform[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBubbleFifoTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mBubble FIFO[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should pass[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with multiple threads[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mCounterTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mWhenCounter 4[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mWhenCounter 7[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMuxCounter 5[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mDownCounter 7[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mFunctionCounter 8[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mNerdCounter 13[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should count[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAddersTest:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAdders[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should add numbers[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should work with odd width[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mRun completed in 11 seconds, 852 milliseconds.[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTotal number of tests run: 106[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mSuites: completed 58, aborted 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTests: succeeded 92, failed 14, canceled 0, ignored 0, pending 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m*** 14 TESTS FAILED ***[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mPassed tests:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	FunctionalTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ExampleTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	BcdTableTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	EncDecTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ShiftRegisterTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ArbiterTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ScalaGenTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	FsmTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SyncResetTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CountBoolTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AddersTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	RegisterTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	fifo.FifoTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ConvertTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ComparatorTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	RegisterFileTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MemoryTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ParamRouterTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	LogicTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SimpleTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TimerTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SimpleTestPeek[0m
+[0m[[0m[0mdebug[0m] [0m[0m	BubbleFifoTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TickerTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	FlasherTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SimpleTestExpect[0m
+[0m[[0m[0mdebug[0m] [0m[0m	FunctionalMinTester[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ClockDomainsTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	leros.AluAccuTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	GenHardwareTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TagTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	DrawingTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CombinationalTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	WaveformCounterTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CounterTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	InterconnectTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SimplePrintfTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MultiClockMemoryTester[0m
+[0m[[0m[0mdebug[0m] [0m[0m	DebounceTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ComponentTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	PwmTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	BoringTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SequentialTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ReadyValidBufferTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	CounterDeviceTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AssertTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ParamFuncTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	PrintfCntTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	WaveformTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ArbiterTreeTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	PopulationCountTest[0m
+[0m[[0m[0mdebug[0m] [0m[0m	BundleVecTest[0m
+[0m[[0m[31merror[0m] [0m[0mFailed tests:[0m
+[0m[[0m[31merror[0m] [0m[0m	verilog.BasicTest[0m
+[0m[[0m[31merror[0m] [0m[0m	BlackBoxesTest[0m
+[0m[[0m[31merror[0m] [0m[0m	Xbr2xPipelineTest[0m
+[0m[[0m[31merror[0m] [0m[0m	FileReaderTest[0m
+[0m[[0m[31merror[0m] [0m[0m	FormalTest[0m
+[0m[[0m[31merror[0m] [0m[0m	Snippets[0m
+[0m[[0m[31merror[0m] [0m[0m(Test / [31mtest[0m) sbt.TestsFailedException: Tests unsuccessful[0m

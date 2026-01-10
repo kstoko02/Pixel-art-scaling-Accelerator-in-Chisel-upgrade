@@ -1,0 +1,47 @@
+FormalSimpleTest
+input reset : bv<1>
+input a : bv<8>
+input b : bv<8>
+node m_io_a : bv<8> = a
+node m_io_b : bv<8> = b
+node m_io_y : bv<8> = and(m_io_a, m_io_b)
+node _T : bv<1> = a[0]
+node _T_1 : bv<1> = b[0]
+node result_0 : bv<1> = and(_T, _T_1)
+node _T_3 : bv<1> = a[1]
+node _T_4 : bv<1> = b[1]
+node result_1 : bv<1> = and(_T_3, _T_4)
+node _T_6 : bv<1> = a[2]
+node _T_7 : bv<1> = b[2]
+node result_2 : bv<1> = and(_T_6, _T_7)
+node _T_9 : bv<1> = a[3]
+node _T_10 : bv<1> = b[3]
+node result_3 : bv<1> = and(_T_9, _T_10)
+node _T_12 : bv<1> = a[4]
+node _T_13 : bv<1> = b[4]
+node result_4 : bv<1> = and(_T_12, _T_13)
+node _T_15 : bv<1> = a[5]
+node _T_16 : bv<1> = b[5]
+node result_5 : bv<1> = and(_T_15, _T_16)
+node _T_18 : bv<1> = a[6]
+node _T_19 : bv<1> = b[6]
+node result_6 : bv<1> = and(_T_18, _T_19)
+node _T_21 : bv<1> = a[7]
+node _T_22 : bv<1> = b[7]
+node result_7 : bv<1> = and(_T_21, _T_22)
+node resUInt_lo_lo : bv<2> = concat(result_1, result_0)
+node resUInt_lo_hi : bv<2> = concat(result_3, result_2)
+node resUInt_lo : bv<4> = concat(resUInt_lo_hi, resUInt_lo_lo)
+node resUInt_hi_lo : bv<2> = concat(result_5, result_4)
+node resUInt_hi_hi : bv<2> = concat(result_7, result_6)
+node resUInt_hi : bv<4> = concat(resUInt_hi_hi, resUInt_hi_lo)
+node resUInt : bv<8> = concat(resUInt_hi, resUInt_lo)
+node _T_24 : bv<1> = eq(m_io_y, resUInt)
+node _T_25 : bv<1> = not(reset)
+node _T_26 : bv<1> = not(_T_24)
+node _resetPhase : bv<1> = not(ugeq(_resetCount, 1'b1))
+bad assert : bv<1> = not(implies(_T_25, _T_24))
+constraint _resetActive : bv<1> = implies(_resetPhase, reset)
+state _resetCount : bv<1>
+  [init] 1'b0
+  [next] ite(_resetPhase, add(zext(_resetCount, 1), zext(1'b1, 1))[0], _resetCount)
