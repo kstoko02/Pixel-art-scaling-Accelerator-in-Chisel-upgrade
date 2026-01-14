@@ -180,6 +180,7 @@ project/plugins/project/
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/scala,sbt,java,intellij,visualstudiocode
+<<<<<<< HEAD
 
 # Chisel/SBT build
 project/target/
@@ -192,3 +193,5 @@ target/
 
 project/target/
 target/
+=======
+>>>>>>> c5b7475 (chore: add .gitignore and drop build artifacts)

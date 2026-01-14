@@ -42,3 +42,7 @@ addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % chiselVersion cross Cr
 libraryDependencies += "org.chipsalliance" %% "chisel" % chiselVersion
 libraryDependencies += "edu.berkeley.cs" %% "chiseltest" % "6.0.0"
 */
+
+// ========= 讓測試中的 print/println 即時顯示（進度條會出現） =========
+Test / logBuffered := false
+Test / parallelExecution := false

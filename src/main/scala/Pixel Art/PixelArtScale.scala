@@ -1,3 +1,4 @@
+// File: src/test/scala/pixelart/PixelArtScale.scala
 package pixelart
 
 import chisel3._
@@ -11,346 +12,264 @@ import java.io.File
 import scala.io.StdIn
 
 /**
-  * Enhanced Edge Detection Module
-  * Detects edges in an image using the Sobel algorithm, calculating gradients 
-  * and determining edge direction and strength based on gradient magnitude and direction.
+  * Xbr2x Pixel Art Scaler Wrapper
+  * 使用 Xbr2xPipeline 作為核心處理引擎
+  * 只支援 2x（所以不再暴露 scaleFactor 參數）
   */
-class EnhancedEdgeDetector extends Module {
-  val io = IO(new Bundle {
-    // Input pixel (24-bit RGB)
-    val currentPixel = Input(UInt(24.W))
-    // Neighboring pixels (8 directions: top-left, top, top-right, left, right, bottom-left, bottom, bottom-right)
-    val neighbors = Input(Vec(8, UInt(24.W)))
-    // Outputs: edge direction and strength
-    val edgeDirection = Output(UInt(2.W)) // 00: None, 01: Horizontal, 10: Vertical, 11: Diagonal
-    val edgeStrength  = Output(UInt(8.W)) // Edge strength
-  })
-
-  // Extract RGB components from a 24-bit pixel
-  def getRGB(pixel: UInt): (UInt, UInt, UInt) = {
-    val r = pixel(23, 16)
-    val g = pixel(15, 8)
-    val b = pixel(7, 0)
-    (r, g, b)
-  }
-
-  // Convert a pixel to grayscale using the standard grayscale formula
-  def toGray(pixel: UInt): UInt = {
-    val (r, g, b) = getRGB(pixel)
-    (r * 299.U + g * 587.U + b * 114.U) / 1000.U
-  }
-
-  // Convert the current pixel and its neighbors to grayscale
-  val grayCurrent = toGray(io.currentPixel)
-  val grayNeighbors = io.neighbors.map(toGray)
-
-  // Sobel kernels for edge detection
-  val sobelX = Array(
-    -1, 0, 1,
-    -2, 0, 2,
-    -1, 0, 1
-  )
-  val sobelY = Array(
-    -1, -2, -1,
-     0,  0,  0,
-     1,  2,  1
-  )
-
-  // Compute gradients Gx and Gy using Sobel kernels
-  val gx = (grayNeighbors(0).asSInt * sobelX(0).S +
-            grayNeighbors(1).asSInt * sobelX(1).S +
-            grayNeighbors(2).asSInt * sobelX(2).S +
-            grayNeighbors(3).asSInt * sobelX(3).S +
-            grayNeighbors(4).asSInt * sobelX(4).S +
-            grayNeighbors(5).asSInt * sobelX(5).S +
-            grayNeighbors(6).asSInt * sobelX(6).S +
-            grayNeighbors(7).asSInt * sobelX(7).S).asUInt
-
-  val gy = (grayNeighbors(0).asSInt * sobelY(0).S +
-            grayNeighbors(1).asSInt * sobelY(1).S +
-            grayNeighbors(2).asSInt * sobelY(2).S +
-            grayNeighbors(3).asSInt * sobelY(3).S +
-            grayNeighbors(4).asSInt * sobelY(4).S +
-            grayNeighbors(5).asSInt * sobelY(5).S +
-            grayNeighbors(6).asSInt * sobelY(6).S +
-            grayNeighbors(7).asSInt * sobelY(7).S).asUInt
-
-  // Calculate gradient magnitude |Gx| + |Gy|
-  val gradient = (gx.asSInt.abs + gy.asSInt.abs).asUInt
-
-  // Set a threshold to determine edges
-  val threshold = 30.U
-
-  // Determine if the current pixel is part of an edge
-  val isEdge = gradient > threshold
-
-  // Compute edge direction based on Gx and Gy
-  val direction = Wire(UInt(2.W))
-  when(gx > gy) {
-    direction := 1.U // Horizontal edge
-  } .elsewhen(gx < gy) {
-    direction := 2.U // Vertical edge
-  } .otherwise {
-    direction := 3.U // Diagonal edge
-  }
-
-  // Output edge direction and strength
-  io.edgeDirection := Mux(isEdge, direction, 0.U) // 0 if not an edge
-  io.edgeStrength := gradient(7, 0) // Output 8-bit edge strength
-}
-
-/**
-  * Enhanced Pixel Interpolator Module
-  * Performs interpolation based on edge detection results.
-  * Supports scaling factors of 1x to 4x.
-  */
-class EnhancedPixelInterpolator(scaleFactor: Int) extends Module {
-  require(scaleFactor >= 1 && scaleFactor <= 4, "Scale factor must be between 1 and 4")
+class Xbr2xPixelArtScaler(
+  width: Int,
+  height: Int,
+  pixBits: Int = 8,
+  threshold: Int = 0,
+  queueDepth: Int = 16
+) extends Module {
+  require(pixBits >= 8 && pixBits <= 24, "pixBits must be 8, 16, or 24")
+  require(width >= 2 && height >= 2, "Image must be at least 2x2")
 
   val io = IO(new Bundle {
-    // Input pixel (24-bit RGB)
-    val currentPixel = Input(UInt(24.W))
-    // Edge detection results
-    val edgeDirection = Input(UInt(2.W)) // Edge direction
-    val edgeStrength  = Input(UInt(8.W)) // Edge strength
-    // Output pixels after interpolation (scaleFactor x scaleFactor block)
-    val outPixels = Output(Vec(scaleFactor * scaleFactor, UInt(24.W)))
+    val inPixel   = Input(UInt(pixBits.W))
+    val inYuv     = Input(UInt(24.W))
+    val inValid   = Input(Bool())
+    val inReady   = Output(Bool())
+
+    val outPixels = Output(Vec(4, UInt(pixBits.W)))
+    val outValid  = Output(Bool())
+    val outReady  = Input(Bool())
+    val outX      = Output(UInt(16.W))
+    val outY      = Output(UInt(16.W))
   })
 
-  // Extract RGB components
-  def getRGB(pixel: UInt): (UInt, UInt, UInt) = {
-    val r = pixel(23, 16)
-    val g = pixel(15, 8)
-    val b = pixel(7, 0)
-    (r, g, b)
-  }
+  // Xbr2xPipeline(pixBits, imgW, thr, outQueueDepth)
+  val xbr = Module(new Xbr2xPipeline(pixBits, width, threshold, queueDepth))
 
-  // Linear interpolation between two values
-  def lerp(a: UInt, b: UInt, t: UInt): UInt = {
-    ((a.asUInt * (255.U - t)) + (b.asUInt * t)) / 255.U
-  }
+  xbr.io.in.valid     := io.inValid
+  xbr.io.in.bits.pix  := io.inPixel
+  xbr.io.in.bits.yuv  := io.inYuv
+  io.inReady          := xbr.io.in.ready
 
-  // Extract RGB components from the input pixel
-  val (r, g, b) = getRGB(io.currentPixel)
+  // 產生 sof/eol（以 inValid && inReady 的 handshake 走座標）
+  val col        = RegInit(0.U(log2Ceil(width + 1).W))
+  val row        = RegInit(0.U(log2Ceil(height + 2).W))
+  val firstPixel = RegInit(true.B)
 
-  // Fill output pixels based on edge direction
-  for (i <- 0 until (scaleFactor * scaleFactor)) {
-    val row = (i / scaleFactor).U
-    val col = (i % scaleFactor).U
-    val t_row = (row * 255.U) / scaleFactor.U
-    val t_col = (col * 255.U) / scaleFactor.U
+  // defaults（注意：先給 default，再在 when 裡覆蓋）
+  xbr.io.in.bits.sof := false.B
+  xbr.io.in.bits.eol := false.B
 
-    io.outPixels(i) := MuxLookup(io.edgeDirection, io.currentPixel)(
-      Seq(
-        // Horizontal edge: Mix left and right pixels
-        1.U -> io.currentPixel, // Replace with proper interpolation logic
-        // Vertical edge: Mix top and bottom pixels
-        2.U -> io.currentPixel, // Replace with proper interpolation logic
-        // Diagonal edge: Bilinear interpolation
-        3.U -> io.currentPixel  // Replace with proper interpolation logic
-      )
-    )
-  }
-
-  // If the edge strength is low, replicate the current pixel
-  for (i <- 0 until (scaleFactor * scaleFactor)) {
-    when(io.edgeStrength < 50.U) {
-      io.outPixels(i) := io.currentPixel
-    }
-  }
-}
-
-/**
-  * Enhanced Pixel Art Scaler
-  * Combines edge detection and interpolation to scale images by a specified factor.
-  */
-class EnhancedPixelArtScaler(width: Int, height: Int, scaleFactor: Int) extends Module {
-  require(scaleFactor >= 1, "Scale factor must be at least 1")
-  require(scaleFactor <= 4, "Scale factor is limited to a maximum of 4 for this implementation")
-
-  val io = IO(new Bundle {
-    val inPixel  = Input(UInt(24.W))                  // Input pixel (24-bit RGB)
-    val inValid  = Input(Bool())                     // Valid signal for input
-    val outPixels = Output(Vec(scaleFactor * scaleFactor, UInt(24.W))) // Scaled output pixels
-    val outValid  = Output(Bool())                   // Valid signal for output
-    val neighbor = Output(Vec(8, UInt(24.W)))        // Neighboring pixels for edge detection
-  })
-
-  // Row buffers to store previous, current, and next rows of the image
-  val lineBufferPrev = RegInit(VecInit(Seq.fill(width)(0.U(24.W))))
-  val lineBufferCurrent = RegInit(VecInit(Seq.fill(width)(0.U(24.W))))
-  val lineBufferNext = RegInit(VecInit(Seq.fill(width)(0.U(24.W))))
-
-  // Current column and row indices
-  val col = RegInit(0.U(log2Ceil(width + 1).W))
-  val row = RegInit(0.U(log2Ceil(height + 1).W))
-
-  // Shift registers for neighboring pixel access
-  val shiftRegPrev = RegInit(VecInit(Seq.fill(3)(0.U(24.W))))
-  val shiftRegCurrent = RegInit(VecInit(Seq.fill(3)(0.U(24.W))))
-  val shiftRegNext = RegInit(VecInit(Seq.fill(3)(0.U(24.W))))
-
-  // Instantiate edge detection and pixel interpolation modules
-  val edgeDetector = Module(new EnhancedEdgeDetector)
-  val pixelInterpolator = Module(new EnhancedPixelInterpolator(scaleFactor))
-
-  // Update row buffers and indices on valid input
-  when(io.inValid) {
-    lineBufferPrev := lineBufferCurrent
-    lineBufferCurrent := lineBufferNext
-    lineBufferNext(col) := io.inPixel
-
-    when(col === (width - 1).U) {
+  when(io.inValid && io.inReady) {
+    when(firstPixel) {
+      xbr.io.in.bits.sof := true.B
+      xbr.io.in.bits.eol := (width.U === 1.U)
+      firstPixel := false.B
+      col := 1.U
+      row := 0.U
+    }.elsewhen(col === (width - 1).U) {
+      xbr.io.in.bits.eol := true.B
       col := 0.U
       row := row + 1.U
-    } .otherwise {
+    }.otherwise {
       col := col + 1.U
     }
-
-    shiftRegPrev(0) := lineBufferPrev(col)
-    shiftRegPrev(1) := shiftRegPrev(0)
-    shiftRegPrev(2) := shiftRegPrev(1)
-
-    shiftRegCurrent(0) := lineBufferCurrent(col)
-    shiftRegCurrent(1) := shiftRegCurrent(0)
-    shiftRegCurrent(2) := shiftRegCurrent(1)
-
-    shiftRegNext(0) := lineBufferNext(col)
-    shiftRegNext(1) := shiftRegNext(0)
-    shiftRegNext(2) := shiftRegNext(1)
   }
 
-  // Determine neighboring pixels
-  val neighbors = Wire(Vec(8, UInt(24.W)))
-  neighbors(0) := Mux(row === 0.U || col === 0.U, 0.U, shiftRegPrev(1)) // Top-left
-  neighbors(1) := Mux(row === 0.U, 0.U, shiftRegPrev(0))               // Top
-  neighbors(2) := Mux(row === 0.U || col === (width - 1).U, 0.U, shiftRegPrev(2)) // Top-right
-  neighbors(3) := Mux(col === 0.U, 0.U, shiftRegCurrent(1))            // Left
-  neighbors(4) := Mux(col === (width - 1).U, 0.U, shiftRegCurrent(2)) // Right
-  neighbors(5) := Mux(row === (height - 1).U || col === 0.U, 0.U, shiftRegNext(1)) // Bottom-left
-  neighbors(6) := Mux(row === (height - 1).U, 0.U, shiftRegNext(0))   // Bottom
-  neighbors(7) := Mux(row === (height - 1).U || col === (width - 1).U, 0.U, shiftRegNext(2)) // Bottom-right
-
-  io.neighbor := neighbors
-
-  // Connect edge detector
-  edgeDetector.io.currentPixel := io.inPixel
-  edgeDetector.io.neighbors := neighbors
-
-  // Connect pixel interpolator
-  pixelInterpolator.io.currentPixel := io.inPixel
-  pixelInterpolator.io.edgeDirection := edgeDetector.io.edgeDirection
-  pixelInterpolator.io.edgeStrength := edgeDetector.io.edgeStrength
-
-  io.outPixels := pixelInterpolator.io.outPixels
-  io.outValid := io.inValid
+  xbr.io.out.ready := io.outReady
+  io.outValid      := xbr.io.out.valid
+  io.outPixels     := xbr.io.out.bits.block
+  io.outX          := xbr.io.out.bits.x
+  io.outY          := xbr.io.out.bits.y
 }
 
 /**
-  * Main object to handle image scaling
-  * Reads input image, scales it using Chisel modules, and saves the result.
+  * Main object to handle image scaling using Xbr2xPipeline
+  * - 只支援 2x：不再詢問/讀取 scaleFactor
+  * - 支援 -Din / -Dout
   */
 object PixelArtScale extends App {
-  // (1) Get scale factor from the user
-  println("Enter the scaling factor (e.g., 2 for 2x scaling):")
-  val scaleFactorInput = StdIn.readInt()
-  require(scaleFactorInput >= 1 && scaleFactorInput <= 4, "Scale factor must be between 1 and 4")
 
-  // (2) Load input image into a 2D array
+  // === 支援 -Din / -Dout 系統參數（其餘不變） ===
+  val inputPath = sys.props.getOrElse("in", {
+    println("Enter the image path:")
+    StdIn.readLine()
+  })
+  require(inputPath.nonEmpty, "Image path cannot be empty")
+
+  val defaultOutDir = {
+    val f = new File(inputPath)
+    Option(f.getParent).getOrElse(new File(".").getCanonicalPath)
+  }
+  val outDir = sys.props.getOrElse("out", defaultOutDir)
+  new File(outDir).mkdirs()
+
+  // 固定 2x
+  val scaleFactor = 2
+
   def loadImageToMatrix(path: String): Array[Array[Int]] = {
     val img  = ImageIO.read(new File(path))
+    require(img != null, s"Cannot read image: $path")
     val w    = img.getWidth
     val h    = img.getHeight
     val data = Array.ofDim[Int](h, w)
-
     for (y <- 0 until h; x <- 0 until w) {
       data(y)(x) = img.getRGB(x, y) & 0xFFFFFF
     }
     data
   }
 
-object ImageConfig {
-  def inputPath: String =
-    sys.props.getOrElse("inputImage", "")
-}
+  def clamp8(x: Int): Int = if (x < 0) 0 else if (x > 255) 255 else x
 
-  // (3) Save a 2D array as an image
+  def rgbToYuvPacked(rgb24: Int): Int = {
+    val r = (rgb24 >> 16) & 0xff
+    val g = (rgb24 >>  8) & 0xff
+    val b = (rgb24 >>  0) & 0xff
+    val y  = (77*r + 150*g + 29*b) >> 8
+    val u  = ((-43*r - 85*g + 128*b) >> 8) + 128
+    val v  = ((128*r - 107*g - 21*b) >> 8) + 128
+    (clamp8(y) << 16) | (clamp8(u) << 8) | clamp8(v)
+  }
+
   def saveMatrixToImage(matrix: Array[Array[Int]], outPath: String): Unit = {
     val h = matrix.length
     val w = if (h > 0) matrix(0).length else 0
     val outImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
-
     for (y <- 0 until h; x <- 0 until w) {
       outImg.setRGB(x, y, matrix(y)(x) & 0xFFFFFF)
     }
     ImageIO.write(outImg, "png", new File(outPath))
   }
 
-  // (4) Prepare input and output matrices
-  val inputPath = ImageConfig.inputPath
-  println(s"[Debug] inputPath = '$inputPath'")
   val inputFile = new File(inputPath)
-  //val parentDir = new java.io.File(inputPath).getParent
-  //val inputName = new java.io.File(inputPath).getName
-  val parentDir = inputFile.getParent
+  require(inputFile.exists(), s"Input file not found: $inputPath")
+
   val inputName = inputFile.getName
-  val dotIndex = inputName.lastIndexOf(".")
-  val baseName = if(dotIndex != -1) inputName.substring(0, dotIndex) else inputName
+  val dotIndex  = inputName.lastIndexOf(".")
+  val baseName  = if (dotIndex != -1) inputName.substring(0, dotIndex) else inputName
+
   val inputMatrix = loadImageToMatrix(inputPath)
+  val inHeight    = inputMatrix.length
+  val inWidth     = if (inHeight > 0) inputMatrix(0).length else 0
+  require(inWidth >= 2 && inHeight >= 2, s"Image must be at least 2x2, got ${inWidth}x${inHeight}")
 
-  val inHeight = inputMatrix.length
-  val inWidth  = if (inHeight > 0) inputMatrix(0).length else 0
+  val outHeight = inHeight * scaleFactor
+  val outWidth  = inWidth  * scaleFactor
 
-  val outHeight = inHeight * scaleFactorInput
-  val outWidth  = inWidth  * scaleFactorInput
   val outputMatrix = Array.ofDim[Int](outHeight, outWidth)
+  val written      = Array.fill(outHeight, outWidth)(false)
 
   println(s"[Info] Input image size: $inWidth x $inHeight")
-  println(s"[Info] Scale factor: ${scaleFactorInput}x")
+  println(s"[Info] Scale factor: 2x")
   println(s"[Info] Output image size: $outWidth x $outHeight")
 
-  // (5) Use Chisel to simulate the scaling process
-  RawTester.test(new EnhancedPixelArtScaler(inWidth, inHeight, scaleFactorInput)) { dut =>
-    val total = inHeight + 2
-    val barWidth = 50
-    for (y <- 0 until total) {
-      for (x <- 0 until inWidth + 2) {
-        val rgb24 = if (y >= 1 && y <= inHeight && x >= 1 && x <= inWidth)
-          inputMatrix(y - 1)(x - 1)
-        else
-          0 // Fill boundary with 0
+  RawTester.test(
+    new Xbr2xPixelArtScaler(
+      width     = inWidth,
+      height    = inHeight,
+      pixBits   = 24,
+      threshold = 0,
+      queueDepth = 16
+    )
+  ) { dut =>
+    val inputPixelCount = inHeight * inWidth
+    var blockCount = 0
+    var pixelCount = 0
+
+    for (y <- 0 until inHeight) {
+      for (x <- 0 until inWidth) {
+        val rgb24 = inputMatrix(y)(x)
+        val yuv24 = rgbToYuvPacked(rgb24)
 
         dut.io.inPixel.poke(rgb24.U)
+        dut.io.inYuv.poke(yuv24.U)
         dut.io.inValid.poke(true.B)
+        dut.io.outReady.poke(true.B)
 
         dut.clock.step(1)
+        pixelCount += 1
 
         if (dut.io.outValid.peek().litToBoolean) {
-          for (i <- 0 until (scaleFactorInput * scaleFactorInput)) {
-            val outP = dut.io.outPixels(i).peek().litValue.toInt & 0xFFFFFF
-            val baseY = (y - 1) * scaleFactorInput
-            val baseX = (x - 1) * scaleFactorInput
+          val cx = dut.io.outX.peek().litValue.toInt
+          val cy = dut.io.outY.peek().litValue.toInt
+          val block = (0 until 4).map(i => dut.io.outPixels(i).peek().litValue.toInt & 0xFFFFFF)
 
-            val pixelY = baseY + (i / scaleFactorInput)
-            val pixelX = baseX + (i % scaleFactorInput)
+          val outY0 = cy * 2
+          val outX0 = cx * 2
 
-            if (pixelY >= 0 && pixelY < outHeight && pixelX >= 0 && pixelX < outWidth) {
-              outputMatrix(pixelY)(pixelX) = outP
-            }
+          if (outY0 >= 0 && outY0 + 1 < outHeight && outX0 >= 0 && outX0 + 1 < outWidth) {
+            outputMatrix(outY0)(outX0)         = block(0); written(outY0)(outX0)         = true
+            outputMatrix(outY0)(outX0 + 1)     = block(1); written(outY0)(outX0 + 1)     = true
+            outputMatrix(outY0 + 1)(outX0)     = block(2); written(outY0 + 1)(outX0)     = true
+            outputMatrix(outY0 + 1)(outX0 + 1) = block(3); written(outY0 + 1)(outX0 + 1) = true
+            blockCount += 1
           }
         }
+
+        val stepPrint = math.max(1, inputPixelCount / 100)
+        if (pixelCount % stepPrint == 0) {
+          val progress = (pixelCount * 100) / inputPixelCount
+          print(s"\rProgress: ${progress}%")
+        }
       }
-      //===== update progress bar=====
-      val filled = ((y + 1) * barWidth) / total
-      val bar = "#" * filled + "-" * (barWidth - filled)
-      print(s"\r[$bar] ${(y + 1) * 100 / total}%")
     }
     println()
-    dut.clock.step(1)
+
+    // Drain pipeline
+    var lastSeen = 0
+    for (i <- 0 until (inWidth + inHeight + 128)) {
+      dut.io.inValid.poke(false.B)
+      dut.io.outReady.poke(true.B)
+      dut.clock.step(1)
+
+      if (dut.io.outValid.peek().litToBoolean) {
+        val cx = dut.io.outX.peek().litValue.toInt
+        val cy = dut.io.outY.peek().litValue.toInt
+        val block = (0 until 4).map(i => dut.io.outPixels(i).peek().litValue.toInt & 0xFFFFFF)
+
+        val outY0 = cy * 2
+        val outX0 = cx * 2
+
+        if (outY0 >= 0 && outY0 + 1 < outHeight && outX0 >= 0 && outX0 + 1 < outWidth) {
+          outputMatrix(outY0)(outX0)         = block(0); written(outY0)(outX0)         = true
+          outputMatrix(outY0)(outX0 + 1)     = block(1); written(outY0)(outX0 + 1)     = true
+          outputMatrix(outY0 + 1)(outX0)     = block(2); written(outY0 + 1)(outX0)     = true
+          outputMatrix(outY0 + 1)(outX0 + 1) = block(3); written(outY0 + 1)(outX0 + 1) = true
+          blockCount += 1
+        }
+        lastSeen = i
+      } else {
+        // 如果連續很久都沒看到 outValid，可以提前結束（可選）
+        // if (i - lastSeen > 32) {}
+      }
+    }
+    println(s"[Info] Total blocks processed: $blockCount")
   }
 
-  // (6) Save the scaled image
-  val outputPath = s"$parentDir/${baseName}_scaling.png"
+  // ------------------------------------------------------------
+  // Fix border: replicate LAST input row/col into the 2x output
+  // ------------------------------------------------------------
+  val lastInRow = inHeight - 1
+  val lastInCol = inWidth  - 1
+
+  // 右邊 2 欄：複製輸入最後一欄
+  for (y <- 0 until outHeight) {
+    val srcInY = math.min(lastInRow, y / 2)
+    val srcRGB = inputMatrix(srcInY)(lastInCol) & 0xFFFFFF
+    outputMatrix(y)(outWidth - 2) = srcRGB
+    outputMatrix(y)(outWidth - 1) = srcRGB
+    written(y)(outWidth - 2) = true
+    written(y)(outWidth - 1) = true
+  }
+
+  // 下方 2 列：複製輸入最後一列
+  for (x <- 0 until outWidth) {
+    val srcInX = math.min(lastInCol, x / 2)
+    val srcRGB = inputMatrix(lastInRow)(srcInX) & 0xFFFFFF
+    outputMatrix(outHeight - 2)(x) = srcRGB
+    outputMatrix(outHeight - 1)(x) = srcRGB
+    written(outHeight - 2)(x) = true
+    written(outHeight - 1)(x) = true
+  }
+
+  // 輸出檔案到 -Dout 指定資料夾
+  val outputPath = s"$outDir/${baseName}_xbr2x.png"
   saveMatrixToImage(outputMatrix, outputPath)
   println(s"[Info] Done! Scaled image saved to: $outputPath")
 }
