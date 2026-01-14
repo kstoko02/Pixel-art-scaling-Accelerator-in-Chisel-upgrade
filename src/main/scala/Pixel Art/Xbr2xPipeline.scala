@@ -1,3 +1,4 @@
+// File: src/main/scala/pixelart/Xbr2xPipeline.scala
 package pixelart
 
 import chisel3._
@@ -6,8 +7,8 @@ import chisel3.util._
 class PixIn(pixBits: Int) extends Bundle {
   val pix = UInt(pixBits.W)   // RGB24: 0xRRGGBB
   val yuv = UInt(24.W)        // packed YUV: [23:16]=Y, [15:8]=U, [7:0]=V
-  val sof = Bool()            // Start Of Frame
-  val eol = Bool()            // end of line
+  val sof = Bool()
+  val eol = Bool()
 }
 
 class Block2x2Out(pixBits: Int) extends Bundle {
@@ -310,79 +311,43 @@ class Xbr2xPipeline(
   // S5：edge 比較 + 依 C 的插值規則混色（scaleFactor=2 對應 2×2 block）
   // ============================================================
 
-  @inline def absDiffU(a: UInt, b: UInt): UInt = Mux(a >= b, a - b, b - a)
+  def absDiffU(a: UInt, b: UInt): UInt = Mux(a >= b, a - b, b - a)
 
-  // d(a,b) = 48*|dY| + 7*|dU| + 6*|dV|
-  // 這個值最大 15555，14-bit 足夠，所以最後切到 (13,0) 以縮短 carry chain
-  @inline def yuv_dist_packed(a: UInt, b: UInt): UInt = {
+  def yuv_dist_packed(a: UInt, b: UInt): UInt = {
     val ay = a(23,16); val au = a(15,8); val av = a(7,0)
     val by = b(23,16); val bu = b(15,8); val bv = b(7,0)
-    val dy = absDiffU(ay, by) // 8b
+    val dy = absDiffU(ay, by)
     val du = absDiffU(au, bu)
     val dv = absDiffU(av, bv)
-
-    val dy48 = (dy << 5) +& (dy << 4)                     // 48*dy
-    val du7  = (du << 2) +& (du << 1) +& du               // 7*du
-    val dv6  = (dv << 2) +& (dv << 1)                     // 6*dv
-    val sum  = dy48 +& du7 +& dv6
-
-    sum(13,0) // 14-bit
+    (dy << 5) + (dy << 4) + (du << 2) + (du << 1) + du + (dv << 2) + (dv << 1)
   }
 
-  // 注意：這仍是「快速近似」；若你要完全貼近 C 的 d()<=600，
-  // 可在 S4a 額外算 dist 並用 (dist <= 600.U) 取代這個 fast eq。
-  @inline def yuv_equals_fast(a: UInt, b: UInt, TY: Int = 20, TC: Int = 70): Bool = {
+  // 注意：這仍是「快速近似」；若你要完全貼近 C 的 d()<=600，請把 equals 改成 yuv_dist_packed(a,b) <= 600.U
+  def yuv_equals_fast(a: UInt, b: UInt, TY: Int = 20, TC: Int = 70): Bool = {
     val ay = a(23,16); val au = a(15,8); val av = a(7,0)
     val by = b(23,16); val bu = b(15,8); val bv = b(7,0)
-    @inline def absU(x: UInt, y: UInt) = Mux(x >= y, x - y, y - x)
+    def absU(x: UInt, y: UInt) = Mux(x >= y, x - y, y - x)
     val dy = absU(ay, by)
     val du = absU(au, bu)
     val dv = absU(av, bv)
     (dy <= TY.U) && ((du +& dv) <= TC.U)
   }
 
-  // --------- RGB mixing（固定權重，移除乘法）---------
-  // 50% new: (E + new + 1) >> 1
-  @inline def mix50_rgb888(E: UInt, n: UInt): UInt = {
-    @inline def m(a8: UInt, b8: UInt): UInt = ((a8 +& b8 + 1.U) >> 1)(7,0)
-    Cat(
-      m(E(23,16), n(23,16)),
-      m(E(15,8),  n(15,8)),
-      m(E(7,0),   n(7,0))
-    )
-  }
-
-  // 25% new: (3*E + 1*new + 2) >> 2
-  @inline def mix25New_rgb888(E: UInt, n: UInt): UInt = {
-    @inline def m(e8: UInt, n8: UInt): UInt = {
-      val sum = ((e8 << 1) +& e8 +& n8 +& 2.U) // 3*E + new + 2
-      (sum >> 2)(7,0)
+  // mix: wB_num/16，含四捨五入 (+8)
+  def mix16_rgb888(a: UInt, b: UInt, wB_num: Int): UInt = {
+    val wB = wB_num.U(5.W)
+    val wA = (16 - wB_num).U(5.W)
+    def mix8(a8: UInt, b8: UInt): UInt = {
+      val sum = (a8 * wA) + (b8 * wB) + 8.U
+      (sum >> 4)(7,0)
     }
-    Cat(
-      m(E(23,16), n(23,16)),
-      m(E(15,8),  n(15,8)),
-      m(E(7,0),   n(7,0))
-    )
+    val ar = a(23,16); val ag = a(15,8); val ab = a(7,0)
+    val br = b(23,16); val bg = b(15,8); val bb = b(7,0)
+    Cat(mix8(ar, br), mix8(ag, bg), mix8(ab, bb))
   }
 
-  // 75% new: (1*E + 3*new + 2) >> 2
-  @inline def mix75New_rgb888(E: UInt, n: UInt): UInt = {
-    @inline def m(e8: UInt, n8: UInt): UInt = {
-      val sum = (e8 +& (n8 << 1) +& n8 +& 2.U) // E + 3*new + 2
-      (sum >> 2)(7,0)
-    }
-    Cat(
-      m(E(23,16), n(23,16)),
-      m(E(15,8),  n(15,8)),
-      m(E(7,0),   n(7,0))
-    )
-  }
-
-  // 17-bit wd（最大約 93330）
-  @inline def wd17(a: UInt, b: UInt, c: UInt): UInt = {
-    val sum = a +& b +& (c << 2)
-    sum(16,0) // 17-bit
-  }
+  def closerToE(c1_rgb: UInt, c2_rgb: UInt, y1: UInt, y2: UInt, Ey: UInt): UInt =
+    Mux(yuv_dist_packed(Ey, y1) <= yuv_dist_packed(Ey, y2), c1_rgb, c2_rgb)
 
   // ---------------- S4a ----------------
   val s4a_valid = RegInit(false.B)
@@ -396,17 +361,10 @@ class Xbr2xPipeline(
   val Fp = Reg(UInt(pixBits.W)); val Hp = Reg(UInt(pixBits.W))
   val Ep = Reg(UInt(pixBits.W))
 
-  // 14-bit distances (<=15555)
-  val dCE = Reg(UInt(14.W)); val dEG = Reg(UInt(14.W)); val dFH = Reg(UInt(14.W))
-  val dBF = Reg(UInt(14.W)); val dDH = Reg(UInt(14.W)); val dEI = Reg(UInt(14.W))
-  val dAE = Reg(UInt(14.W)); val dCB = Reg(UInt(14.W))
-  val dAB = Reg(UInt(14.W)); val dDG = Reg(UInt(14.W))
-
-  // ★ 先算好 newColor 的「closerToE」比較所需距離，避免 S5 再算 dist
-  val dEB = Reg(UInt(14.W))
-  val dED = Reg(UInt(14.W))
-  val dEF = Reg(UInt(14.W))
-  val dEH = Reg(UInt(14.W))
+  val dCE = Reg(UInt(16.W)); val dEG = Reg(UInt(16.W)); val dFH = Reg(UInt(16.W))
+  val dBF = Reg(UInt(16.W)); val dDH = Reg(UInt(16.W)); val dEI = Reg(UInt(16.W))
+  val dAE = Reg(UInt(16.W)); val dCB = Reg(UInt(16.W))
+  val dAB = Reg(UInt(16.W)); val dDG = Reg(UInt(16.W))
 
   val eq_FG = Reg(Bool()); val eq_CH = Reg(Bool())
   val eq_DI = Reg(Bool()); val eq_AH = Reg(Bool())
@@ -425,18 +383,12 @@ class Xbr2xPipeline(
 
     Bp := s3_win.B; Dp := s3_win.D; Fp := s3_win.F; Hp := s3_win.H; Ep := s3_win.E
 
-    @inline def dist14(a: UInt, b: UInt): UInt = yuv_dist_packed(a, b)(13,0)
+    def dist(a: UInt, b: UInt) = yuv_dist_packed(a, b)
 
-    dCE := dist14(Cy, Ey); dEG := dist14(Ey, Gy); dFH := dist14(Fy, Hy)
-    dBF := dist14(By, Fy); dDH := dist14(Dy, Hy); dEI := dist14(Ey, Iy)
-    dAE := dist14(Ay, Ey); dCB := dist14(Cy, By)
-    dAB := dist14(Ay, By); dDG := dist14(Dy, Gy)
-
-    // closerToE compare helpers
-    dEB := dist14(Ey, By)
-    dED := dist14(Ey, Dy)
-    dEF := dist14(Ey, Fy)
-    dEH := dist14(Ey, Hy)
+    dCE := dist(Cy, Ey); dEG := dist(Ey, Gy); dFH := dist(Fy, Hy)
+    dBF := dist(By, Fy); dDH := dist(Dy, Hy); dEI := dist(Ey, Iy)
+    dAE := dist(Ay, Ey); dCB := dist(Cy, By)
+    dAB := dist(Ay, By); dDG := dist(Dy, Gy)
 
     eq_FG := yuv_equals_fast(Fy, Gy)
     eq_CH := yuv_equals_fast(Cy, Hy)
@@ -461,47 +413,32 @@ class Xbr2xPipeline(
 
   // ---------------- S5（最終邏輯+混色） ----------------
   // 重要：用 Wire/Mux chain，避免 when-scope escape
-  // 混色權重（等同你要的：0.5 / 0.25 / 0.75）
+
   val W_INT1  = 8   // 0.5
   val W_INT2s = 4   // 0.25
-  val W_INT2l = 12  // 0.75
+  val W_INT2l = 12  // 0.75（你原本寫 12 是 0.75，不是 0.8125；0.8125 應該是 13）
 
-  // candidates (wire) — 這裡已經不再算 dist，只用 S4a 的距離比較結果
+  // candidates (wire)
   val brNew = Wire(UInt(pixBits.W))
   val blNew = Wire(UInt(pixBits.W))
   val tlNew = Wire(UInt(pixBits.W))
   val trNew = Wire(UInt(pixBits.W))
 
-  // BR: pick F or H by which is closer to E
-  brNew := Mux(dEF <= dEH, Fp, Hp)
-  // BL: pick D or H by which is closer to E
-  blNew := Mux(dED <= dEH, Dp, Hp)
-  // TL: pick B or D by which is closer to E
-  tlNew := Mux(dEB <= dED, Bp, Dp)
-  // TR: pick B or F by which is closer to E
-  trNew := Mux(dEB <= dEF, Bp, Fp)
+  brNew := closerToE(Fp, Hp, Fy, Hy, Ey)
+  blNew := closerToE(Dp, Hp, Dy, Hy, Ey)
+  tlNew := closerToE(Bp, Dp, By, Dy, Ey)
+  trNew := closerToE(Bp, Fp, By, Fy, Ey)
 
-  // edges (wire) — 用 17-bit wd，避免不必要的寬度膨脹
+  // edges (wire)
   val edgeBR = Wire(Bool())
   val edgeBL = Wire(Bool())
   val edgeTL = Wire(Bool())
   val edgeTR = Wire(Bool())
 
-  val brO = wd17(dCE, dEG, dFH)
-  val brP = wd17(dBF, dDH, dEI)
-  edgeBR := brO < brP
-
-  val blO = wd17(dAE, dEI, dDH)
-  val blP = wd17(dBF, dFH, dEG)
-  edgeBL := blO < blP
-
-  val tlO = wd17(dCE, dEG, dCB)
-  val tlP = wd17(dAB, dDG, dAE)
-  edgeTL := tlO < tlP
-
-  val trO = wd17(dAE, dEI, dBF)
-  val trP = wd17(dCB, dFH, dCE)
-  edgeTR := trO < trP
+  edgeBR := (dCE + dEG + (dFH << 2)) < (dBF + dDH + (dEI << 2))
+  edgeBL := (dAE + dEI + (dDH << 2)) < (dBF + dFH + (dEG << 2))
+  edgeTL := (dCE + dEG + (dCB << 2)) < (dAB + dDG + (dAE << 2))
+  edgeTR := (dAE + dEI + (dBF << 2)) < (dCB + dFH + (dCE << 2))
 
   // base
   val e0_0 = Ep
@@ -514,40 +451,40 @@ class Xbr2xPipeline(
   val br_hasNone = edgeBR && !(eq_FG || eq_CH)
 
   val e0_1 = e0_0
-  val e1_1 = Mux(edgeBR && eq_CH, mix25New_rgb888(e1_0, brNew), e1_0) // INT2_s = 0.25 new
-  val e2_1 = Mux(edgeBR && eq_FG, mix25New_rgb888(e2_0, brNew), e2_0)
-  val e3_1 = Mux(br_hasInt2, mix75New_rgb888(e3_0, brNew),              // INT2_l = 0.75 new
-             Mux(br_hasNone, mix50_rgb888(e3_0, brNew), e3_0))          // INT1 = 0.5 new
+  val e1_1 = Mux(edgeBR && eq_CH, mix16_rgb888(e1_0, brNew, W_INT2s), e1_0)
+  val e2_1 = Mux(edgeBR && eq_FG, mix16_rgb888(e2_0, brNew, W_INT2s), e2_0)
+  val e3_1 = Mux(br_hasInt2, mix16_rgb888(e3_0, brNew, W_INT2l),
+             Mux(br_hasNone, mix16_rgb888(e3_0, brNew, W_INT1), e3_0))
 
   // Stage 2: BL
   val bl_hasInt2 = edgeBL && (eq_DI || eq_AH)
   val bl_hasNone = edgeBL && !(eq_DI || eq_AH)
 
-  val e0_2 = Mux(edgeBL && eq_AH, mix25New_rgb888(e0_1, blNew), e0_1)
+  val e0_2 = Mux(edgeBL && eq_AH, mix16_rgb888(e0_1, blNew, W_INT2s), e0_1)
   val e1_2 = e1_1
-  val e2_2 = Mux(bl_hasInt2, mix75New_rgb888(e2_1, blNew),
-             Mux(bl_hasNone, mix50_rgb888(e2_1, blNew), e2_1))
-  val e3_2 = Mux(edgeBL && eq_DI, mix25New_rgb888(e3_1, blNew), e3_1)
+  val e2_2 = Mux(bl_hasInt2, mix16_rgb888(e2_1, blNew, W_INT2l),
+             Mux(bl_hasNone, mix16_rgb888(e2_1, blNew, W_INT1), e2_1))
+  val e3_2 = Mux(edgeBL && eq_DI, mix16_rgb888(e3_1, blNew, W_INT2s), e3_1)
 
   // Stage 3: TL
   val tl_hasInt2 = edgeTL && (eq_CD || eq_BG)
   val tl_hasNone = edgeTL && !(eq_CD || eq_BG)
 
-  val e0_3 = Mux(tl_hasInt2, mix75New_rgb888(e0_2, tlNew),
-             Mux(tl_hasNone, mix50_rgb888(e0_2, tlNew), e0_2))
-  val e1_3 = Mux(edgeTL && eq_CD, mix25New_rgb888(e1_2, tlNew), e1_2)
-  val e2_3 = Mux(edgeTL && eq_BG, mix25New_rgb888(e2_2, tlNew), e2_2)
+  val e0_3 = Mux(tl_hasInt2, mix16_rgb888(e0_2, tlNew, W_INT2l),
+             Mux(tl_hasNone, mix16_rgb888(e0_2, tlNew, W_INT1), e0_2))
+  val e1_3 = Mux(edgeTL && eq_CD, mix16_rgb888(e1_2, tlNew, W_INT2s), e1_2)
+  val e2_3 = Mux(edgeTL && eq_BG, mix16_rgb888(e2_2, tlNew, W_INT2s), e2_2)
   val e3_3 = e3_2
 
   // Stage 4: TR
   val tr_hasInt2 = edgeTR && (eq_AF || eq_BI)
   val tr_hasNone = edgeTR && !(eq_AF || eq_BI)
 
-  val e0_4 = Mux(edgeTR && eq_AF, mix25New_rgb888(e0_3, trNew), e0_3)
-  val e1_4 = Mux(tr_hasInt2, mix75New_rgb888(e1_3, trNew),
-             Mux(tr_hasNone, mix50_rgb888(e1_3, trNew), e1_3))
+  val e0_4 = Mux(edgeTR && eq_AF, mix16_rgb888(e0_3, trNew, W_INT2s), e0_3)
+  val e1_4 = Mux(tr_hasInt2, mix16_rgb888(e1_3, trNew, W_INT2l),
+             Mux(tr_hasNone, mix16_rgb888(e1_3, trNew, W_INT1), e1_3))
   val e2_4 = e2_3
-  val e3_4 = Mux(edgeTR && eq_BI, mix25New_rgb888(e3_3, trNew), e3_3)
+  val e3_4 = Mux(edgeTR && eq_BI, mix16_rgb888(e3_3, trNew, W_INT2s), e3_3)
 
   // write into S5 regs (gated)
   when(!stall && v4 && s4a_valid) {
