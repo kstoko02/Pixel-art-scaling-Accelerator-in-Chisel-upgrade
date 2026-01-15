@@ -3,7 +3,7 @@ package pixelart
 import chisel3._
 import chisel3.util._
 
-// ===== 基本 I/O =====
+// ==== Basic I/O =====
 class PixIn(pixBits: Int) extends Bundle {
   val pix = UInt(pixBits.W)   // 0xRRGGBB
   val yuv = UInt(24.W)        // [23:16]=Y, [15:8]=U, [7:0]=V
@@ -19,7 +19,7 @@ class Block2x2Out(pixBits: Int) extends Bundle {
   val eol   = Bool()
 }
 
-// ===== 3x3 視窗 =====
+// ===== 3x3 windows ====
 class Win3x3(pixBits: Int) extends Bundle {
   val A = UInt(pixBits.W); val B = UInt(pixBits.W); val C = UInt(pixBits.W)
   val D = UInt(pixBits.W); val E = UInt(pixBits.W); val F = UInt(pixBits.W)
@@ -32,16 +32,14 @@ class Win3x3Yuv extends Bundle {
   val G = UInt(24.W); val H = UInt(24.W); val I = UInt(24.W)
 }
 
-// ===== 中繼 meta =====
 class MetaWin extends Bundle {
   val xc  = UInt(16.W)
   val yc  = UInt(16.W)
   val sof = Bool()
   val eol = Bool()
-  val emit= Bool()   // 僅作除錯觀察，不再 gate valid
+  val emit= Bool() 
 }
 
-// ===== 各 stage 之間傳的 payload =====
 class S2OutBundle(pixBits: Int) extends Bundle {
   val winRGB = new Win3x3(pixBits)
   val winYUV = new Win3x3Yuv

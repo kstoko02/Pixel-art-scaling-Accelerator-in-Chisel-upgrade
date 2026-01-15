@@ -4,9 +4,6 @@ import chisel3._
 import chisel3.util._
 import Utils._
 
-/** S4a：預計算距離/等色 + 帶上必要 RGB/YUV 與 meta。
-  * 採用 1-entry 通道緩衝（允許同拍 pop & push）。
-  */
 class S4aPrecompute(pixBits: Int) extends Module {
   val io = IO(new Bundle {
     val in    = Flipped(Decoupled(new S2OutBundle(pixBits)))
@@ -39,10 +36,10 @@ class S4aPrecompute(pixBits: Int) extends Module {
       holdBits.dAE := yuvDistPacked(Ay, Ey); holdBits.dCB := yuvDistPacked(Cy, By)
       holdBits.dAB := yuvDistPacked(Ay, By); holdBits.dDG := yuvDistPacked(Dy, Gy)
 
-      holdBits.eq_FG := yuvEqualsFast(Fy, Gy); holdBits.eq_CH := yuvEqualsFast(Cy, Hy)
-      holdBits.eq_DI := yuvEqualsFast(Dy, Iy); holdBits.eq_AH := yuvEqualsFast(Ay, Hy)
-      holdBits.eq_CD := yuvEqualsFast(Cy, Dy); holdBits.eq_BG := yuvEqualsFast(By, Gy)
-      holdBits.eq_AF := yuvEqualsFast(Ay, Fy); holdBits.eq_BI := yuvEqualsFast(By, Iy)
+      holdBits.eq_FG := yuv_equals(Fy, Gy); holdBits.eq_CH := yuv_equals(Cy, Hy)
+      holdBits.eq_DI := yuv_equals(Dy, Iy); holdBits.eq_AH := yuv_equals(Ay, Hy)
+      holdBits.eq_CD := yuv_equals(Cy, Dy); holdBits.eq_BG := yuv_equals(By, Gy)
+      holdBits.eq_AF := yuv_equals(Ay, Fy); holdBits.eq_BI := yuv_equals(By, Iy)
 
       holdBits.meta := b.meta
       holdValid     := true.B

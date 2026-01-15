@@ -11,11 +11,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import scala.io.StdIn
 
-/**
-  * Xbr2x Pixel Art Scaler Wrapper
-  * 使用 Xbr2xPipeline 作為核心處理引擎
-  * 只支援 2x（所以不再暴露 scaleFactor 參數）
-  */
+
 class Xbr2xPixelArtScaler(
   width: Int,
   height: Int,
@@ -39,20 +35,24 @@ class Xbr2xPixelArtScaler(
     val outY      = Output(UInt(16.W))
   })
 
-  // Xbr2xPipeline(pixBits, imgW, thr, outQueueDepth)
-  val xbr = Module(new Xbr2xPipeline(pixBits, width, threshold, queueDepth))
+  // Xbr2xPipeline(pixBits, imgW, imgH, thr, outQueueDepth)
+  val xbr = Module(new Xbr2xPipeline(
+    pixBits = pixBits,
+    imgW    = width,   
+    imgH    = height,  
+    thr     = threshold,
+    outQueueDepth = queueDepth
+  ))
 
   xbr.io.in.valid     := io.inValid
   xbr.io.in.bits.pix  := io.inPixel
   xbr.io.in.bits.yuv  := io.inYuv
   io.inReady          := xbr.io.in.ready
 
-  // 產生 sof/eol（以 inValid && inReady 的 handshake 走座標）
   val col        = RegInit(0.U(log2Ceil(width + 1).W))
   val row        = RegInit(0.U(log2Ceil(height + 2).W))
   val firstPixel = RegInit(true.B)
 
-  // defaults（注意：先給 default，再在 when 裡覆蓋）
   xbr.io.in.bits.sof := false.B
   xbr.io.in.bits.eol := false.B
 
@@ -79,14 +79,9 @@ class Xbr2xPixelArtScaler(
   io.outY          := xbr.io.out.bits.y
 }
 
-/**
-  * Main object to handle image scaling using Xbr2xPipeline
-  * - 只支援 2x：不再詢問/讀取 scaleFactor
-  * - 支援 -Din / -Dout
-  */
+
 object PixelArtScale extends App {
 
-  // === 支援 -Din / -Dout 系統參數（其餘不變） ===
   val inputPath = sys.props.getOrElse("in", {
     println("Enter the image path:")
     StdIn.readLine()
@@ -100,7 +95,7 @@ object PixelArtScale extends App {
   val outDir = sys.props.getOrElse("out", defaultOutDir)
   new File(outDir).mkdirs()
 
-  // 固定 2x
+  //  2x
   val scaleFactor = 2
 
   def loadImageToMatrix(path: String): Array[Array[Int]] = {
@@ -161,10 +156,10 @@ object PixelArtScale extends App {
 
   RawTester.test(
     new Xbr2xPixelArtScaler(
-      width     = inWidth,
-      height    = inHeight,
-      pixBits   = 24,
-      threshold = 0,
+      width      = inWidth,
+      height     = inHeight,
+      pixBits    = 24,
+      threshold  = 0,
       queueDepth = 16
     )
   ) { dut =>
@@ -235,7 +230,6 @@ object PixelArtScale extends App {
         }
         lastSeen = i
       } else {
-        // 如果連續很久都沒看到 outValid，可以提前結束（可選）
         // if (i - lastSeen > 32) {}
       }
     }
@@ -248,7 +242,6 @@ object PixelArtScale extends App {
   val lastInRow = inHeight - 1
   val lastInCol = inWidth  - 1
 
-  // 右邊 2 欄：複製輸入最後一欄
   for (y <- 0 until outHeight) {
     val srcInY = math.min(lastInRow, y / 2)
     val srcRGB = inputMatrix(srcInY)(lastInCol) & 0xFFFFFF
@@ -258,7 +251,6 @@ object PixelArtScale extends App {
     written(y)(outWidth - 1) = true
   }
 
-  // 下方 2 列：複製輸入最後一列
   for (x <- 0 until outWidth) {
     val srcInX = math.min(lastInCol, x / 2)
     val srcRGB = inputMatrix(lastInRow)(srcInX) & 0xFFFFFF
@@ -268,7 +260,6 @@ object PixelArtScale extends App {
     written(outHeight - 1)(x) = true
   }
 
-  // 輸出檔案到 -Dout 指定資料夾
   val outputPath = s"$outDir/${baseName}_xbr2x.png"
   saveMatrixToImage(outputMatrix, outputPath)
   println(s"[Info] Done! Scaled image saved to: $outputPath")

@@ -1,18 +1,18 @@
-// File: src/main/scala/pixelart/Xbr2xPipeline.scala
 package pixelart
 
 import chisel3._
 import chisel3.util._
 
-/** Top：S0/S1（行緩衝與座標）+ S2/S3/S4a/S5 模組串接 + Queue 出口 */
 class Xbr2xPipeline(
   pixBits: Int,
   imgW: Int,
+  imgH: Int,
   thr: Int = 0,
   outQueueDepth: Int = 16
 ) extends Module {
 
   require(imgW >= 2, "imgW must be >= 2")
+  require(imgH >= 2, "imgH must be >= 2") 
 
   val io = IO(new Bundle {
     val in  = Flipped(Decoupled(new PixIn(pixBits)))
@@ -36,14 +36,13 @@ class Xbr2xPipeline(
   val v1 = RegInit(false.B)
   val v2 = RegInit(false.B)
   val v3 = RegInit(false.B)
-  val v4 = RegInit(false.B) // S5 前一級
+  val v4 = RegInit(false.B) // default is 0
 
-  // 背壓：只在 S5 有效且 outQ 滿時才阻塞
-  val willEnq = WireDefault(false.B)
+  val willEnq = WireDefault(false.B)  // does S5 have any effective output
   val stall   = v4 && willEnq && !outQ.io.enq.ready
 
   io.in.ready := !stall
-  val fireIn  = io.in.valid && io.in.ready
+  val fireIn  = io.in.valid && io.in.ready  // new data in
 
   when(!stall) {
     v1 := fireIn; v2 := v1; v3 := v2; v4 := v3
@@ -62,7 +61,7 @@ class Xbr2xPipeline(
 
   when(fireIn) {
     when(s0_sof) {
-      x := Mux(s0_eol, 0.U, 1.U); y := 0.U
+      x := Mux(s0_eol, 0.U, 1.U); y := 0.U  // Calculate the next coordinate
     }.elsewhen(s0_eol) {
       x := 0.U; y := y + 1.U
     }.otherwise {
@@ -137,8 +136,8 @@ class Xbr2xPipeline(
   s1_row_m1_yuv := Mux(s1_y === 0.U, s1_yuv, rawy_m1)
   s1_row_m2_yuv := Mux(s1_y === 0.U, s1_yuv, Mux(s1_y === 1.U, s1_row_m1_yuv, rawy_m2))
 
-  // ---------------- S2 / S3 / S4a / S5 串接 ----------------
-  val s2 = Module(new S2Window(pixBits, imgW))
+  // ---------------- S2 / S3 / S4a / S5  ----------------
+  val s2 = Module(new S2Window(pixBits, imgW, imgH))
   s2.io.in_pix       := s1_pix
   s2.io.in_yuv       := s1_yuv
   s2.io.row_m1_rgb   := s1_row_m1_rgb
@@ -163,19 +162,16 @@ class Xbr2xPipeline(
   val s5  = Module(new S5Blend(pixBits))
   s5.io.in <> s4a.io.out
 
-  // dbg（在 S3 觀察 window）
   dbg.valid := s3.io.out.valid
   dbg.A := s3.io.out.bits.winRGB.A; dbg.B := s3.io.out.bits.winRGB.B; dbg.C := s3.io.out.bits.winRGB.C
   dbg.D := s3.io.out.bits.winRGB.D; dbg.E := s3.io.out.bits.winRGB.E; dbg.F := s3.io.out.bits.winRGB.F
   dbg.G := s3.io.out.bits.winRGB.G; dbg.H := s3.io.out.bits.winRGB.H; dbg.I := s3.io.out.bits.winRGB.I
   dbg.xc := s3.io.out.bits.meta.xc; dbg.yc := s3.io.out.bits.meta.yc
 
-  // ---------------- S5 → outQ：每個中心像素都輸出 ----------------
-  // 1) 背壓/握手：用「是否真的要 enqueue」= s5.io.out.valid
+
   willEnq := s5.io.out.valid
   s5.io.out.ready := outQ.io.enq.ready
 
-  // 2) 只要 valid 就送（一律 enqueue），避免消費端缺列
   outQ.io.enq.valid := s5.io.out.valid
   outQ.io.enq.bits  := 0.U.asTypeOf(new Block2x2Out(pixBits))
 

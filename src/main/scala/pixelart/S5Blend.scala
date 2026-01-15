@@ -4,9 +4,7 @@ import chisel3._
 import chisel3.util._
 import Utils._
 
-/** S5：edge 判斷與混色，輸出 2×2 block。
-  * 修正：使用「可同拍 pop & push」的 1-entry 緩衝，**不再用 meta.emit gate out.valid**。
-  */
+
 class S5Blend(pixBits: Int) extends Module {
   val io = IO(new Bundle {
     val in   = Flipped(Decoupled(new S4aOutBundle(pixBits)))
