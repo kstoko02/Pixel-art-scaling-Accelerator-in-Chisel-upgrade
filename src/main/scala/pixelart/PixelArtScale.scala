@@ -132,6 +132,7 @@ object PixelArtScale extends App {
     ImageIO.write(outImg, "png", new File(outPath))
   }
 
+
   val inputFile = new File(inputPath)
   require(inputFile.exists(), s"Input file not found: $inputPath")
 
@@ -167,7 +168,34 @@ object PixelArtScale extends App {
     var blockCount = 0
     var pixelCount = 0
 
-    for (y <- 0 until inHeight) {
+    var ix = 0
+    val totalIn = inWidth * inHeight
+
+    dut.io.outReady.poke(true.B)
+
+    while (ix < totalIn) {
+      val y = ix / inWidth
+      val x = ix % inWidth
+
+      val rgb24 = inputMatrix(y)(x)
+      val yuv24 = rgbToYuvPacked(rgb24)
+
+      dut.io.inPixel.poke(rgb24.U)
+      dut.io.inYuv.poke(yuv24.U)
+      dut.io.inValid.poke(true.B)
+
+      // 先收 output（可選，但建議）
+      if (tryPopOne()) blockCount += 1
+
+      // 看 ready，只有 fire 才消耗這個 input
+      val ready = dut.io.inReady.peek().litToBoolean
+      dut.clock.step(1)
+      if (ready) ix += 1
+    }
+    dut.io.inValid.poke(false.B)
+
+
+    /*for (y <- 0 until inHeight) {
       for (x <- 0 until inWidth) {
         val rgb24 = inputMatrix(y)(x)
         val yuv24 = rgbToYuvPacked(rgb24)
@@ -204,60 +232,49 @@ object PixelArtScale extends App {
         }
       }
     }
-    println()
+    println()*/
 
-    // Drain pipeline
-    var lastSeen = 0
-    for (i <- 0 until (inWidth + inHeight + 128)) {
-      dut.io.inValid.poke(false.B)
-      dut.io.outReady.poke(true.B)
-      dut.clock.step(1)
-
+    def tryPopOne(): Boolean = {
       if (dut.io.outValid.peek().litToBoolean) {
         val cx = dut.io.outX.peek().litValue.toInt
         val cy = dut.io.outY.peek().litValue.toInt
         val block = (0 until 4).map(i => dut.io.outPixels(i).peek().litValue.toInt & 0xFFFFFF)
-
+        if (cy == inHeight - 1 && cx < 3) {
+          println(f"bottom block @($cx,$cy): ${block.map(b => f"0x$b%06X").mkString(", ")}")
+        }
         val outY0 = cy * 2
         val outX0 = cx * 2
-
         if (outY0 >= 0 && outY0 + 1 < outHeight && outX0 >= 0 && outX0 + 1 < outWidth) {
           outputMatrix(outY0)(outX0)         = block(0); written(outY0)(outX0)         = true
           outputMatrix(outY0)(outX0 + 1)     = block(1); written(outY0)(outX0 + 1)     = true
           outputMatrix(outY0 + 1)(outX0)     = block(2); written(outY0 + 1)(outX0)     = true
           outputMatrix(outY0 + 1)(outX0 + 1) = block(3); written(outY0 + 1)(outX0 + 1) = true
-          blockCount += 1
         }
-        lastSeen = i
-      } else {
-        // if (i - lastSeen > 32) {}
-      }
+        true
+      } else false
+    }
+
+    // Drain pipeline
+    var lastSeen = 0
+    val totalExpected = inWidth * inHeight
+
+    dut.clock.step(1)
+    if (tryPopOne()) blockCount += 1
+
+    dut.io.inValid.poke(false.B)
+    dut.io.outReady.poke(true.B)
+
+    var guard = 0
+    while (blockCount < totalExpected && guard < totalExpected + 5000) {
+      dut.clock.step(1)
+      if (tryPopOne()) blockCount += 1
+      guard += 1
     }
     println(s"[Info] Total blocks processed: $blockCount")
-  }
+    println(s"[Info] Total blocks processed: $blockCount / ${inWidth*inHeight}")
 
-  // ------------------------------------------------------------
-  // Fix border: replicate LAST input row/col into the 2x output
-  // ------------------------------------------------------------
-  val lastInRow = inHeight - 1
-  val lastInCol = inWidth  - 1
-
-  for (y <- 0 until outHeight) {
-    val srcInY = math.min(lastInRow, y / 2)
-    val srcRGB = inputMatrix(srcInY)(lastInCol) & 0xFFFFFF
-    outputMatrix(y)(outWidth - 2) = srcRGB
-    outputMatrix(y)(outWidth - 1) = srcRGB
-    written(y)(outWidth - 2) = true
-    written(y)(outWidth - 1) = true
-  }
-
-  for (x <- 0 until outWidth) {
-    val srcInX = math.min(lastInCol, x / 2)
-    val srcRGB = inputMatrix(lastInRow)(srcInX) & 0xFFFFFF
-    outputMatrix(outHeight - 2)(x) = srcRGB
-    outputMatrix(outHeight - 1)(x) = srcRGB
-    written(outHeight - 2)(x) = true
-    written(outHeight - 1)(x) = true
+    val missBottom = (0 until outWidth).count(x => !written(outHeight-1)(x))
+    println(s"[Info] Missing pixels in bottom row: $missBottom / $outWidth")
   }
 
   val outputPath = s"$outDir/${baseName}_xbr2x.png"
