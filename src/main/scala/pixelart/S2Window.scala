@@ -28,6 +28,10 @@ class S2Window(pixBits: Int, imgW: Int, imgH: Int) extends Module {
   val sr1y = RegInit(VecInit(Seq.fill(3)(0.U(24.W))))
   val sr0y = RegInit(VecInit(Seq.fill(3)(0.U(24.W))))
 
+  val lastRowRGB = RegInit(VecInit(Seq.fill(imgW)(0.U(pixBits.W))))
+  val lastRowYUV = RegInit(VecInit(Seq.fill(imgW)(0.U(24.W))))
+  val lastRow2RGB = RegInit(VecInit(Seq.fill(imgW)(0.U(pixBits.W))))
+  val lastRow2YUV = RegInit(VecInit(Seq.fill(imgW)(0.U(24.W))))
   val winRGB_w = Wire(new Win3x3(pixBits)); winRGB_w := 0.U.asTypeOf(winRGB_w)
   val winYUV_w = Wire(new Win3x3Yuv);       winYUV_w := 0.U.asTypeOf(winYUV_w)
   val meta_w   = Wire(new MetaWin);         meta_w   := 0.U.asTypeOf(meta_w)
@@ -36,8 +40,8 @@ class S2Window(pixBits: Int, imgW: Int, imgH: Int) extends Module {
   // control
   val lastCol  = io.s1_x === (imgW-1).U
   val lastRow  = io.s1_y === (imgH-1).U
-  val padX     = RegInit(false.B)   // 行尾多 1 拍
-  val padY     = RegInit(false.B)   // 最下一列
+  val padX     = RegInit(false.B)   
+  val padY     = RegInit(false.B)   
   val fakeX    = RegInit(0.U(16.W)) 
 
   val usePadX = padX
@@ -61,20 +65,42 @@ class S2Window(pixBits: Int, imgW: Int, imgH: Int) extends Module {
     }
   }
 
-  val effX     = Mux(usePadY, fakeX, io.s1_x)
+  val effX = Mux(usePadY, fakeX, Mux(usePadX, imgW.U, io.s1_x))
+  val effY = Mux(usePadY, imgH.U, io.s1_y)
   val firstCol = (effX === 0.U) && !usePadX
   val firstRow = (!usePadY) && (io.s1_y === 0.U)
 
-  val doingFlush       = usePadX || usePadY // Check whether it is the last cell
-  val eff_row_m2_rgb   = Mux(doingFlush, sr2(2), io.row_m2_rgb) 
-  val eff_row_m1_rgb   = Mux(doingFlush, sr1(2), io.row_m1_rgb)
-  val eff_in_pix       = Mux(doingFlush, sr0(2), io.in_pix)
-  val eff_row_m2_yuv   = Mux(doingFlush, sr2y(2), io.row_m2_yuv)
-  val eff_row_m1_yuv   = Mux(doingFlush, sr1y(2), io.row_m1_yuv)
-  val eff_in_yuv       = Mux(doingFlush, sr0y(2), io.in_yuv)
+  // ---------------- effective inputs (handle padX / padY differently) ----------------
+  val fxClamped = Mux(fakeX >= (imgW-1).U, (imgW-1).U, fakeX)
+
+  // padX: repeat last pixel of the row (sr?(2))
+  // padY: use lastRow at current fakeX (so bottom row is NOT all the last pixel)
+  val eff_row_m2_rgb = Mux(usePadY, lastRow2RGB(fxClamped),
+                       Mux(usePadX, sr2(2), io.row_m2_rgb))
+  val eff_row_m1_rgb = Mux(usePadY, lastRowRGB(fxClamped),
+                       Mux(usePadX, sr1(2), io.row_m1_rgb))
+  val eff_in_pix     = Mux(usePadY, lastRow2RGB(fxClamped),
+                       Mux(usePadX, sr0(2), io.in_pix))
+
+  val eff_row_m2_yuv = Mux(usePadY, lastRow2YUV(fxClamped),
+                       Mux(usePadX, sr2y(2), io.row_m2_yuv))
+  val eff_row_m1_yuv = Mux(usePadY, lastRowYUV(fxClamped),
+                       Mux(usePadX, sr1y(2), io.row_m1_yuv))
+  val eff_in_yuv     = Mux(usePadY, lastRow2YUV(fxClamped),
+                       Mux(usePadX, sr0y(2), io.in_yuv))
+
   
   // halo
   when(step) {
+    // capture the real last row for bottom padding (only when consuming real input)
+    when(io.v1 && !usePadY && (io.s1_y === (imgH-1).U) && (io.s1_x < imgW.U)) {
+      lastRowRGB(io.s1_x) := io.in_pix
+      lastRowYUV(io.s1_x) := io.in_yuv
+    }
+    when(io.v1 && !usePadY && (io.s1_y === (imgH-2).U) && (io.s1_x < imgW.U)) {
+      lastRow2RGB(io.s1_x) := io.in_pix
+      lastRow2YUV(io.s1_x) := io.in_yuv
+    }
     val next_sr2_raw  = Mux(firstCol, VecInit(eff_row_m2_rgb, eff_row_m2_rgb, eff_row_m2_rgb),
                                       VecInit(sr2(1),        sr2(2),          eff_row_m2_rgb))
     val next_sr1      = Mux(firstCol, VecInit(eff_row_m1_rgb, eff_row_m1_rgb, eff_row_m1_rgb),
@@ -105,14 +131,26 @@ class S2Window(pixBits: Int, imgW: Int, imgH: Int) extends Module {
     winYUV_w.G := next_sr0y(0); winYUV_w.H := next_sr0y(1); winYUV_w.I := next_sr0y(2)
 
     val canEmitX = effX =/= 0.U
-    val canEmitY = (!usePadY && (io.s1_y =/= 0.U)) || usePadY
-    emit_w := canEmitX && canEmitY
+    val canEmitY = (effY =/= 0.U)
+    val started = RegInit(false.B)
+    when(!io.stall) {
+      when(io.v1 && io.s1_sof) { started := true.B }
+    }
+    emit_w := step && started && (effX =/= 0.U) && canEmitY
 
-    meta_w.xc := Mux(usePadY, Mux(effX === 0.U, 0.U, (effX - 1.U)(15,0)),
-                 Mux(usePadX, io.s1_x, (effX - 1.U)(15,0)))
-    meta_w.yc := Mux(usePadY, (imgH-1).U, (io.s1_y - 1.U)(15,0))
-    meta_w.sof  := io.s1_sof
-    meta_w.eol  := io.s1_eol
+    val centerX = Mux(effX === 0.U, 0.U, effX - 1.U)
+    val centerY = Mux(effY === 0.U, 0.U, effY - 1.U)
+
+    meta_w.xc := Mux(usePadY,
+                    Mux(centerX >= (imgW-1).U, (imgW-1).U, centerX),
+                    Mux(usePadX, (imgW-1).U, centerX))
+
+    meta_w.yc := Mux(centerY >= (imgH-1).U, (imgH-1).U, centerY)
+    meta_w.sof := io.s1_sof && io.v1 && !usePadX && !usePadY
+    val eol_padX = usePadX  
+    val eol_padY = usePadY && (fakeX === imgW.U)
+
+    meta_w.eol := (io.s1_eol && io.v1 && !usePadY) || eol_padX || eol_padY
     meta_w.emit := emit_w
   }
 
