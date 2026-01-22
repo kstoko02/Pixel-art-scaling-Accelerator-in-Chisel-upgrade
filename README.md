@@ -1,32 +1,4 @@
 # Pixel-art scaling Accelerator in Chisel
-## Goals
-* Design a pixel-art scaling hardware accelerator in Chisel, using the algorithms listed in the Wikipedia entry on [pixel-art scaling](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) and drawing technical insight from the [GPU-xBR project](https://github.com/mattiadr/GPU-xBR).
-* Understanding xBR / GPU-xBR
-   * Read and summarize at least three algorithms from:
-     [Pixel-art scaling algorithms](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) and identify the characteristics that distinguish pixel-art scaling from generic image interpolation.
-   * Read `GPU-xBR/Report.pdf` from [GPU-xBR project](https://github.com/mattiadr/GPU-xBR) and extract and summarize the following components:
-     * Pattern-based edge detection
-     * Diagonal continuity rules
-     * Blend selection logic
-     * GPU execution structure (threads, memory layout)
-* Implementing an xBR-Style Scaler in Chisel, with pipelined processing
-* Design neighborhood pattern extraction
-   * Implement a 3×3 or 4×4 window extractor in Chisel using line buffers.
-   * Verify correct windowing on test images via Verilator simulation.
-* Implement xBR-style decision logic
-   * Convert the extracted GPU-xBR rules into combinational Chisel logic:
-     * Edge orientation checks
-     * Diagonal detection
-     * Similarity thresholding
-   * Ensure the logic selects among candidate output pixels (A/B/C/D).
-* Define and implement the scaling factor
-   * Choose the scaling variant (e.g., 2×BR or 3×BR).
-   * Implement the output expansion (e.g., 1 pixel → 2×2 block).
-   * Handle ambiguous or undefined patterns consistently.
-* Test correctness
-   * Use Verilator to simulate the hardware scaler on an assortment of pixel-art test cases.
-   * Compare the output images with GPU-xBR to validate behavior.
-
 ## Introduction
 Version 2.0 replaces the general image interpolation algorithm used in [Version 1.0](https://hackmd.io/@sysprog/r1cybDhSye) with a pixel-art-aware scaling algorithm, shifting the design focus from smooth interpolation to edge-preserving, rule-based scaling specifically tailored for pixel art.
 
