@@ -1,4 +1,4 @@
-// File: src/test/scala/pixelart/PixelArtScale.scala
+// File: src/main/scala/pixelart/PixelArtScale.scala
 package pixelart
 
 import chisel3._
@@ -173,6 +173,29 @@ object PixelArtScale extends App {
 
     dut.io.outReady.poke(true.B)
 
+    // ===== Progress =====
+    val t0 = System.nanoTime()
+    def fmtPct(n: Int, total: Int): String = {
+      val p = if (total == 0) 100.0 else (n.toDouble * 100.0 / total.toDouble)
+      f"$p%6.2f%%"
+    }
+    def fmtSec(): Double = (System.nanoTime() - t0).toDouble / 1e9
+
+    val progressStepIn  = math.max(1, totalIn / 100)           
+    val totalExpected   = inWidth * inHeight                   
+    val progressStepOut = math.max(1, totalExpected / 100)
+
+    def showProgress(phase: String, inDone: Int, outDone: Int): Unit = {
+      val msg =
+        f"\r[$phase] in=$inDone/$totalIn ${fmtPct(inDone, totalIn)}  " +
+        f"out=$outDone/$totalExpected ${fmtPct(outDone, totalExpected)}  " +
+        f"t=${fmtSec()}%.1fs"
+      print(msg)
+      Console.out.flush()
+    }
+
+    showProgress("RUN", inDone = 0, outDone = 0)
+
     while (ix < totalIn) {
       val y = ix / inWidth
       val x = ix % inWidth
@@ -184,64 +207,23 @@ object PixelArtScale extends App {
       dut.io.inYuv.poke(yuv24.U)
       dut.io.inValid.poke(true.B)
 
-      // 先收 output（可選，但建議）
       if (tryPopOne()) blockCount += 1
 
-      // 看 ready，只有 fire 才消耗這個 input
       val ready = dut.io.inReady.peek().litToBoolean
       dut.clock.step(1)
       if (ready) ix += 1
-    }
-    dut.io.inValid.poke(false.B)
-
-
-    /*for (y <- 0 until inHeight) {
-      for (x <- 0 until inWidth) {
-        val rgb24 = inputMatrix(y)(x)
-        val yuv24 = rgbToYuvPacked(rgb24)
-
-        dut.io.inPixel.poke(rgb24.U)
-        dut.io.inYuv.poke(yuv24.U)
-        dut.io.inValid.poke(true.B)
-        dut.io.outReady.poke(true.B)
-
-        dut.clock.step(1)
-        pixelCount += 1
-
-        if (dut.io.outValid.peek().litToBoolean) {
-          val cx = dut.io.outX.peek().litValue.toInt
-          val cy = dut.io.outY.peek().litValue.toInt
-          val block = (0 until 4).map(i => dut.io.outPixels(i).peek().litValue.toInt & 0xFFFFFF)
-
-          val outY0 = cy * 2
-          val outX0 = cx * 2
-
-          if (outY0 >= 0 && outY0 + 1 < outHeight && outX0 >= 0 && outX0 + 1 < outWidth) {
-            outputMatrix(outY0)(outX0)         = block(0); written(outY0)(outX0)         = true
-            outputMatrix(outY0)(outX0 + 1)     = block(1); written(outY0)(outX0 + 1)     = true
-            outputMatrix(outY0 + 1)(outX0)     = block(2); written(outY0 + 1)(outX0)     = true
-            outputMatrix(outY0 + 1)(outX0 + 1) = block(3); written(outY0 + 1)(outX0 + 1) = true
-            blockCount += 1
-          }
-        }
-
-        val stepPrint = math.max(1, inputPixelCount / 100)
-        if (pixelCount % stepPrint == 0) {
-          val progress = (pixelCount * 100) / inputPixelCount
-          print(s"\rProgress: ${progress}%")
-        }
+      // progress (throttle)
+      if ((ix % progressStepIn) == 0 || ix == totalIn) {
+        showProgress("RUN", inDone = ix, outDone = blockCount)
       }
     }
-    println()*/
+    dut.io.inValid.poke(false.B)
 
     def tryPopOne(): Boolean = {
       if (dut.io.outValid.peek().litToBoolean) {
         val cx = dut.io.outX.peek().litValue.toInt
         val cy = dut.io.outY.peek().litValue.toInt
         val block = (0 until 4).map(i => dut.io.outPixels(i).peek().litValue.toInt & 0xFFFFFF)
-        if (cy == inHeight - 1 && cx < 3) {
-          println(f"bottom block @($cx,$cy): ${block.map(b => f"0x$b%06X").mkString(", ")}")
-        }
         val outY0 = cy * 2
         val outX0 = cx * 2
         if (outY0 >= 0 && outY0 + 1 < outHeight && outX0 >= 0 && outX0 + 1 < outWidth) {
@@ -256,7 +238,6 @@ object PixelArtScale extends App {
 
     // Drain pipeline
     var lastSeen = 0
-    val totalExpected = inWidth * inHeight
 
     dut.clock.step(1)
     if (tryPopOne()) blockCount += 1
@@ -269,12 +250,13 @@ object PixelArtScale extends App {
       dut.clock.step(1)
       if (tryPopOne()) blockCount += 1
       guard += 1
-    }
-    println(s"[Info] Total blocks processed: $blockCount")
-    println(s"[Info] Total blocks processed: $blockCount / ${inWidth*inHeight}")
 
-    val missBottom = (0 until outWidth).count(x => !written(outHeight-1)(x))
-    println(s"[Info] Missing pixels in bottom row: $missBottom / $outWidth")
+      if ((blockCount % progressStepOut) == 0 || blockCount == totalExpected) {
+        showProgress("DRAIN", inDone = ix, outDone = blockCount)
+      }
+    }
+    println()
+    println(s"[Info] Total blocks processed: $blockCount / ${inWidth*inHeight}")
   }
 
   val outputPath = s"$outDir/${baseName}_xbr2x.png"
