@@ -38,7 +38,7 @@ class S2Window(pixBits: Int, imgW: Int, imgH: Int) extends Module {
   val lastRow  = io.s1_y === (imgH-1).U
   val padX     = RegInit(false.B)   // 行尾多 1 拍
   val padY     = RegInit(false.B)   // 最下一列
-  val fakeX    = RegInit(0.U(16.W)) // padY 用的 x 走 0..imgW（含行尾 1 拍）
+  val fakeX    = RegInit(0.U(16.W)) 
 
   val usePadX = padX
   val usePadY = padY
