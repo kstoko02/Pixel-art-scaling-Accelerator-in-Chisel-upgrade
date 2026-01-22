@@ -7,7 +7,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import pixelart._
 import chiseltest.simulator.WriteVcdAnnotation
 
-
+ 
 class S2WindowTest extends AnyFlatSpec with ChiselScalatestTester {
   val H = 3
   val W = 4
