@@ -10,7 +10,7 @@ class Xbr2xPipeline(
   thr: Int = 0,
   outQueueDepth: Int = 16
 ) extends Module {
-
+ 
   require(imgW >= 2, "imgW must be >= 2")
   require(imgH >= 2, "imgH must be >= 2") 
 
