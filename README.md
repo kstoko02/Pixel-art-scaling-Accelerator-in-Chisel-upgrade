@@ -1,5 +1,4 @@
 # Pixel-art scaling Accelerator in Chisel
-> 陳沁妤
 > [GitHub](https://github.com/kstoko02/Pixel-art-scaling-Accelerator-in-Chisel-upgrade)
 
 ## Goals
