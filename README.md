@@ -1,4 +1,35 @@
 # Pixel-art scaling Accelerator in Chisel
+> 陳沁妤
+> [GitHub](https://github.com/kstoko02/Pixel-art-scaling-Accelerator-in-Chisel-upgrade)
+
+## Goals
+* Design a pixel-art scaling hardware accelerator in Chisel, using the algorithms listed in the Wikipedia entry on [pixel-art scaling](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) and drawing technical insight from the [GPU-xBR project](https://github.com/mattiadr/GPU-xBR).
+* Understanding xBR / GPU-xBR
+   * Read and summarize at least three algorithms from:
+     [Pixel-art scaling algorithms](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) and identify the characteristics that distinguish pixel-art scaling from generic image interpolation.
+   * Read `GPU-xBR/Report.pdf` from [GPU-xBR project](https://github.com/mattiadr/GPU-xBR) and extract and summarize the following components:
+     * Pattern-based edge detection
+     * Diagonal continuity rules
+     * Blend selection logic
+     * GPU execution structure (threads, memory layout)
+* Implementing an xBR-Style Scaler in Chisel, with pipelined processing
+* Design neighborhood pattern extraction
+   * Implement a 3×3 or 4×4 window extractor in Chisel using line buffers.
+   * Verify correct windowing on test images via Verilator simulation.
+* Implement xBR-style decision logic
+   * Convert the extracted GPU-xBR rules into combinational Chisel logic:
+     * Edge orientation checks
+     * Diagonal detection
+     * Similarity thresholding
+   * Ensure the logic selects among candidate output pixels (A/B/C/D).
+* Define and implement the scaling factor
+   * Choose the scaling variant (e.g., 2×BR or 3×BR).
+   * Implement the output expansion (e.g., 1 pixel → 2×2 block).
+   * Handle ambiguous or undefined patterns consistently.
+* Test correctness
+   * Use Verilator to simulate the hardware scaler on an assortment of pixel-art test cases.
+   * Compare the output images with GPU-xBR to validate behavior.
+
 ## Introduction
 Version 2.0 replaces the general image interpolation algorithm used in [Version 1.0](https://hackmd.io/@sysprog/r1cybDhSye) with a pixel-art-aware scaling algorithm, shifting the design focus from smooth interpolation to edge-preserving, rule-based scaling specifically tailored for pixel art.
 
@@ -335,10 +366,18 @@ The following is the YUV distance weighting formula:
   }
 ```
 * $$ dist = 48\cdot dy + 7\cdot du + 6\cdot dv,\; \text{where } dy = |Y_a - Y_b|,\; du = |U_a - U_b|,\; dv = |V_a - V_b| $$
+
+### Critical-path implications
+In the xBR-style decision logic, the critical path is dominated by **multiple YUV-distance comparisons**.
+Although each distance computation consists of several absolute differences and additions, these operations can be partially parallelized.
+The longest combinational delay typically occurs in the final comparison stage, where multiple accumulated distance values are compared and resolved through a priority decision chain to select the output pixel.
+As a result, the comparator and priority-selection logic in the blending stage form the critical path and ultimately limit the maximum clock frequency of the design.
+
 ### Ambiguous or undefined patterns
 1. Default fallback : if a corner is not classified as an edge, or if the required pattern conditions are not met, that subpixel remains the original 𝐸.
 2. Pattern gating : even if an edge is detected, the design only applies the stronger INT2 behavior when specific equality-pattern conditions in the neighborhood are satisfied (conceptually, “pattern matches” such as FG/CH-type checks for BR, DI/AH for BL, etc.).
-3. Deterministic tie/priority : updates are applied in a fixed order (BR → BL → TL → TR). Each stage uses the previous stage’s intermediate subpixel values as its input. This guarantees reproducible output when multiple corner rules could apply at the same time.
+3. Deterministic tie/priority : updates are applied in a fixed order (BR → BL → TL → TR). Each stage uses the previous stage’s intermediate subpixel values as its input. This guarantees reproducible output when multiple corner rules could apply at the same time. 
+Our hardware applies corner updates in a fixed order, matching the reference GPU-xBR code. Note that other GPU-xBR variants may resolve overlapping corner updates with a different tie-break order; we use a fixed priority to guarantee deterministic hardware behavior and avoid rule conflicts.
 
 As a result, the output is always well-defined: when patterns are unclear, the system gracefully falls back to replication or the weaker blend, avoiding unstable or inconsistent behavior.
 
@@ -372,6 +411,9 @@ This module precomputes and packages all edge-detection data required before the
 ### S5
 The S5Blend module performs the final xBR2x step by applying edge-directed blending to produce a 2×2 upscaled pixel block. It evaluates edge directions from the 3×3 window and precomputed metrics, selects the closest candidate colors, and blends them with fixed weights, using a buffered ready/valid interface to handle backpressure safely.
 
+### Flow diagram
+![Gemini_Generated_Image_g4ebdtg4ebdtg4eb-Photoroom](https://hackmd.io/_uploads/Bykqrt1Ubg.png)
+**Invariant:** A valid window’s coordinates always travel with its window data across S1→S2→S3, even when the pipeline stalls. The unit test has verified its correctness.
 ## Enviroment Setup
 1. install sbt and Scala on Linux
 ```shell
@@ -430,13 +472,57 @@ A 3x3 window extractor was designed.
 ```
 * Running `sbt "testOnly pixelart.S2WindowTest" `confirms correct behavior on the test images through Verilator simulation.
 
-## Result
-The results are summarized in the table below (click to enlarge). Compared to standard nearest-neighbor upscaling, the xBR-based approach produces smoother boundary transitions and more natural-looking lines.
+For test, Define the test image as：
+* H=3, W=4
+* pixBits = 8
+* center = (x-1, y-1)
+```
+row0: 1 2 3 4
+row1: 5 6 7 8
+row2: 9 A B C
+```
+![Screenshot from 2026-01-22 12-59-35](https://hackmd.io/_uploads/BJtSvIyLZl.png)
+* For the 3×4 test image, the waveform at xc = 1, yc = 1 shows a correctly aligned 3×3 window centered at pixel E = 6. The top (A) and left-column (D, G) values differ from the raw image indices because the window is generated from a streaming pipeline with line buffers and padding logic; as a result, boundary pixels are replicated and delayed, causing the window to reflect buffered neighborhood data rather than a direct memory snapshot.
+```
+[info] Xbr2xPipelineTest:
+[info] Xbr2xPipeline
+[info] - should hold S3 debug window stable under backpressure stall
+[info] Run completed in 4 seconds, 509 milliseconds.
+[info] Total number of tests run: 1
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 1, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 9 s, completed Jan 22, 2026, 3:28:32 PM
+```
+* Running `sbt "testOnly pixelart.Xbr2xPipelineTest" `confirms correct behavior on the test images through Verilator simulation.
 
-In addition, because the Chisel implementation uses a 3×3 window and different boundary evaluation rules, slight differences can be observed when compared with the GPU version.
-| Chisel 2xBR | GPU-2xBR | Nearest Neighbors 2x |
-|---|---|---|
-|![螢幕擷取畫面 2026-01-20 171201](https://hackmd.io/_uploads/SyCsH76HWg.png)|![螢幕擷取畫面 2026-01-20 171254](https://hackmd.io/_uploads/SkSTr76Hbx.png)|![螢幕擷取畫面 2026-01-20 171324](https://hackmd.io/_uploads/SkLJ8XTBZg.png)|
+![Screenshot from 2026-01-22 15-33-13](https://hackmd.io/_uploads/Hysk4L1LZx.png)
+* Timing diagram of the XBR2x pipeline under backpressure. When `io.in.ready = 0`, the pipeline enters a stall condition. During this period, the 3×3 neighborhood window signals (`dbg_A`–`dbg_I`) and the corresponding center coordinates (`dbg_xc`, `dbg_yc`) remain unchanged across multiple cycles, indicating that the S1 → S2 → S3 stages correctly hold their state under stall and prevent pixel misalignment. Once backpressure is released, the pipeline resumes normal operation and the window advances to the next pixel.
+
+## Result
+We compared the 2× upscaled output produced by our Chisel-based xBR pipeline against the reference GPU-xBR implementation on one representative test image. 
+
+| Chisel 2xBR | GPU-2xBR |
+|---|---|
+|![Screenshot from 2026-01-22 19-22-08](https://hackmd.io/_uploads/HJMsOKkUbe.png)|![Screenshot from 2026-01-22 19-22-41](https://hackmd.io/_uploads/H1X2dt1Ube.png)|
+### Pixel-difference heatmap
+![Screenshot from 2026-01-22 19-36-47](https://hackmd.io/_uploads/Sy-lnFJLZe.png =50%x)
+* A pixel-difference heatmap was generated by computing the absolute RGB difference between the hardware output and the GPU-xBR result. Most differences are localized near diagonal edges, while flat regions show identical results.
+
+### Count of differing pixels 
+```
+Differing pixels with exact: 310 / 4032 (7.69%)
+Differing pixels with tol: 175 / 4032 (4.34%)
+```
+* Using an exact pixel-wise comparison (RGB values must match exactly), 7.69% of output pixels differ. When allowing a small tolerance (per-channel absolute difference ≤ 2), the mismatch rate drops significantly, indicating that many differences are due to rounding in color mixing. 
+
+A difference inspection indicates that mismatches are mainly concentrated around diagonal edges and corner cases, while flat/constant-color regions remain identical. This behavior is expected given our hardware-oriented simplifications: 
+1. the pipeline uses a 3×3 neighborhood rather than GPU-xBR’s larger context, which can change edge classification in ambiguous patterns; 
+2. the design applies deterministic pattern gating for INT2-style strengthening only when equality-pattern conditions are satisfied; and 
+3. in cases where multiple corner rules could overlap, the hardware follows a fixed priority order to guarantee deterministic behavior under backpressure. 
+
+Overall, the quantitative result shows that our Chisel design preserves the core visual characteristics of xBR while introducing small, explainable differences in ambiguous regions.
+
 
 ## Conclusion and Future work
 This project presents a streaming, pipelined xBR-style pixel art upscaler implemented in Chisel. By combining neighborhood construction, edge detection, and rule-based blending, the design produces smoother edges and more natural transitions than nearest-neighbor upscaling while preserving the original pixel art style. Despite using a simplified 3×3 window that introduces minor differences from GPU-based xBR, the design retains the core visual characteristics of xBR with efficient hardware usage and real-time performance.
